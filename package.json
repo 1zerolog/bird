@@ -7,6 +7,12 @@
   "bin": {
     "bird": "dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "pnpm run build:dist && pnpm run build:binary",
     "build:dist": "tsc",
