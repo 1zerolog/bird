@@ -28,6 +28,7 @@ const FALLBACK_QUERY_IDS = {
   SearchTimeline: 'M1jEez78PEfVfbQLvlWMvQ',
   UserArticlesTweets: '8zBy9h4L90aDL02RsBcCFg',
   Bookmarks: 'RV1g3b8n_SGOHwkqKYSCFw',
+  Likes: 'JR2gceKucIKcVNB_9JkhsA',
 } as const;
 
 type OperationName = keyof typeof FALLBACK_QUERY_IDS;
@@ -1969,6 +1970,119 @@ export class TwitterClient {
       }
 
       return { success: false as const, error: lastError ?? 'Unknown error fetching bookmarks', had404 };
+    };
+
+    const firstAttempt = await tryOnce();
+    if (firstAttempt.success) {
+      return { success: true, tweets: firstAttempt.tweets };
+    }
+
+    if (firstAttempt.had404) {
+      await this.refreshQueryIds();
+      const secondAttempt = await tryOnce();
+      if (secondAttempt.success) {
+        return { success: true, tweets: secondAttempt.tweets };
+      }
+      return { success: false, error: secondAttempt.error };
+    }
+
+    return { success: false, error: firstAttempt.error };
+  }
+
+  private async getLikesQueryIds(): Promise<string[]> {
+    const primary = await this.getQueryId('Likes');
+    return Array.from(new Set([primary, 'JR2gceKucIKcVNB_9JkhsA']));
+  }
+
+  /**
+   * Get the authenticated user's liked tweets
+   */
+  async getLikes(count = 20): Promise<SearchResult> {
+    const userResult = await this.getCurrentUser();
+    if (!userResult.success || !userResult.user) {
+      return { success: false, error: userResult.error ?? 'Could not determine current user' };
+    }
+
+    const variables = {
+      userId: userResult.user.id,
+      count,
+      includePromotedContent: false,
+      withClientEventToken: false,
+      withBirdwatchNotes: false,
+      withVoice: true,
+    };
+
+    const features = this.buildBookmarksFeatures();
+
+    const params = new URLSearchParams({
+      variables: JSON.stringify(variables),
+      features: JSON.stringify(features),
+    });
+
+    const tryOnce = async () => {
+      let lastError: string | undefined;
+      let had404 = false;
+      const queryIds = await this.getLikesQueryIds();
+
+      for (const queryId of queryIds) {
+        const url = `${TWITTER_API_BASE}/${queryId}/Likes?${params.toString()}`;
+
+        try {
+          const response = await this.fetchWithTimeout(url, {
+            method: 'GET',
+            headers: this.getHeaders(),
+          });
+
+          if (response.status === 404) {
+            had404 = true;
+            lastError = `HTTP ${response.status}`;
+            continue;
+          }
+
+          if (!response.ok) {
+            const text = await response.text();
+            return { success: false as const, error: `HTTP ${response.status}: ${text.slice(0, 200)}`, had404 };
+          }
+
+          const data = (await response.json()) as {
+            data?: {
+              user?: {
+                result?: {
+                  timeline?: {
+                    timeline?: {
+                      instructions?: Array<{
+                        entries?: Array<{
+                          content?: {
+                            itemContent?: {
+                              tweet_results?: {
+                                result?: GraphqlTweetResult;
+                              };
+                            };
+                          };
+                        }>;
+                      }>;
+                    };
+                  };
+                };
+              };
+            };
+            errors?: Array<{ message: string }>;
+          };
+
+          if (data.errors && data.errors.length > 0) {
+            return { success: false as const, error: data.errors.map((e) => e.message).join(', '), had404 };
+          }
+
+          const instructions = data.data?.user?.result?.timeline?.timeline?.instructions;
+          const tweets = this.parseTweetsFromInstructions(instructions);
+
+          return { success: true as const, tweets, had404 };
+        } catch (error) {
+          lastError = error instanceof Error ? error.message : String(error);
+        }
+      }
+
+      return { success: false as const, error: lastError ?? 'Unknown error fetching likes', had404 };
     };
 
     const firstAttempt = await tryOnce();
