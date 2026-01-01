@@ -8,7 +8,7 @@
 - Help output now documents config files and env vars.
 
 ### Fixed
-- `followers` now falls back to the internal v1.1 REST endpoint when GraphQL returns 404.
+- `following`/`followers` now fall back to the internal v1.1 REST endpoints when GraphQL returns 404.
 
 ### Tests
 - Add regression test for global options in subcommand help.

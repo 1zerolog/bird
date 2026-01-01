@@ -107,6 +107,79 @@ export function withUsers<TBase extends AbstractConstructor<TwitterClientBase>>(
       return { success: false, error: lastError ?? 'Unknown error fetching followers' };
     }
 
+    private async getFollowingViaRest(userId: string, count: number): Promise<FollowingResult> {
+      const params = new URLSearchParams({
+        user_id: userId,
+        count: String(count),
+        skip_status: 'true',
+        include_user_entities: 'false',
+      });
+
+      const urls = [
+        `https://x.com/i/api/1.1/friends/list.json?${params.toString()}`,
+        `https://api.twitter.com/1.1/friends/list.json?${params.toString()}`,
+      ];
+
+      let lastError: string | undefined;
+
+      for (const url of urls) {
+        try {
+          const response = await this.fetchWithTimeout(url, {
+            method: 'GET',
+            headers: this.getHeaders(),
+          });
+
+          if (!response.ok) {
+            const text = await response.text();
+            lastError = `HTTP ${response.status}: ${text.slice(0, 200)}`;
+            continue;
+          }
+
+          const data = (await response.json()) as {
+            users?: Array<{
+              id_str?: string;
+              id?: string | number;
+              screen_name?: string;
+              name?: string;
+              description?: string;
+              followers_count?: number;
+              friends_count?: number;
+              verified?: boolean;
+              profile_image_url_https?: string;
+              created_at?: string;
+            }>;
+          };
+
+          const users = (data.users ?? [])
+            .map((u) => {
+              const id = typeof u.id_str === 'string' ? u.id_str : typeof u.id === 'number' ? String(u.id) : null;
+              const username = typeof u.screen_name === 'string' ? u.screen_name : null;
+              if (!id || !username) {
+                return null;
+              }
+              return {
+                id,
+                username,
+                name: typeof u.name === 'string' && u.name.length > 0 ? u.name : username,
+                description: typeof u.description === 'string' ? u.description : undefined,
+                followersCount: typeof u.followers_count === 'number' ? u.followers_count : undefined,
+                followingCount: typeof u.friends_count === 'number' ? u.friends_count : undefined,
+                isBlueVerified: typeof u.verified === 'boolean' ? u.verified : undefined,
+                profileImageUrl: typeof u.profile_image_url_https === 'string' ? u.profile_image_url_https : undefined,
+                createdAt: typeof u.created_at === 'string' ? u.created_at : undefined,
+              };
+            })
+            .filter((u) => u !== null);
+
+          return { success: true, users };
+        } catch (error) {
+          lastError = error instanceof Error ? error.message : String(error);
+        }
+      }
+
+      return { success: false, error: lastError ?? 'Unknown error fetching following' };
+    }
+
     /**
      * Fetch the account associated with the current cookies
      */
@@ -317,6 +390,14 @@ export function withUsers<TBase extends AbstractConstructor<TwitterClientBase>>(
         if (secondAttempt.success) {
           return { success: true, users: secondAttempt.users };
         }
+
+        // GraphQL Following can also return 404 (queryId churn / endpoint flakiness).
+        // Fallback to the internal v1.1 REST endpoint used by the web client (cookie-auth; no dev API key).
+        const restAttempt = await this.getFollowingViaRest(userId, count);
+        if (restAttempt.success) {
+          return restAttempt;
+        }
+
         return { success: false, error: secondAttempt.error };
       }
 
