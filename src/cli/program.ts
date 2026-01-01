@@ -33,6 +33,20 @@ export function createProgram(ctx: CliContext): Command {
 
   program.configureHelp({
     showGlobalOptions: true,
+    styleTitle: (t) => ctx.colors.section(t),
+    styleUsage: (t) => ctx.colors.description(t),
+    styleCommandText: (t) => ctx.colors.command(t),
+    styleCommandDescription: (t) => ctx.colors.muted(t),
+    styleOptionTerm: (t) => ctx.colors.option(t),
+    styleOptionText: (t) => ctx.colors.option(t),
+    styleOptionDescription: (t) => ctx.colors.muted(t),
+    styleArgumentTerm: (t) => ctx.colors.argument(t),
+    styleArgumentText: (t) => ctx.colors.argument(t),
+    styleArgumentDescription: (t) => ctx.colors.muted(t),
+    styleSubcommandTerm: (t) => ctx.colors.command(t),
+    styleSubcommandText: (t) => ctx.colors.command(t),
+    styleSubcommandDescription: (t) => ctx.colors.muted(t),
+    styleDescriptionText: (t) => ctx.colors.muted(t),
   });
 
   const collect = (value: string, previous: string[] = []): string[] => {

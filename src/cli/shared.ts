@@ -190,8 +190,57 @@ export function createCliContext(normalizedArgs: string[], env: NodeJS.ProcessEn
     accent: wrap((t) => kleur.green(t)),
   };
 
-  const p = (kind: Parameters<typeof statusPrefix>[0]): string => statusPrefix(kind, output);
-  const l = (kind: Parameters<typeof labelPrefix>[0]): string => labelPrefix(kind, output);
+  const p = (kind: Parameters<typeof statusPrefix>[0]): string => {
+    const prefix = statusPrefix(kind, output);
+    if (output.plain || !output.color) {
+      return prefix;
+    }
+    if (kind === 'ok') {
+      return kleur.green(prefix);
+    }
+    if (kind === 'warn') {
+      return kleur.yellow(prefix);
+    }
+    if (kind === 'err') {
+      return kleur.red(prefix);
+    }
+    if (kind === 'info') {
+      return kleur.cyan(prefix);
+    }
+    return kleur.gray(prefix);
+  };
+
+  const l = (kind: Parameters<typeof labelPrefix>[0]): string => {
+    const prefix = labelPrefix(kind, output);
+    if (output.plain || !output.color) {
+      return prefix;
+    }
+    if (kind === 'url') {
+      return kleur.cyan(prefix);
+    }
+    if (kind === 'date') {
+      return kleur.magenta(prefix);
+    }
+    if (kind === 'source') {
+      return kleur.gray(prefix);
+    }
+    if (kind === 'engine') {
+      return kleur.blue(prefix);
+    }
+    if (kind === 'credentials') {
+      return kleur.yellow(prefix);
+    }
+    if (kind === 'user') {
+      return kleur.cyan(prefix);
+    }
+    if (kind === 'userId') {
+      return kleur.magenta(prefix);
+    }
+    if (kind === 'email') {
+      return kleur.green(prefix);
+    }
+    return kleur.gray(prefix);
+  };
 
   const config = loadConfig((message) => {
     console.error(colors.muted(`${p('warn')}${message}`));
