@@ -541,7 +541,7 @@ export function withTimelines<TBase extends AbstractConstructor<TwitterClientBas
         });
 
         // Retry-After supports delta-seconds only; HTTP-date falls back to backoff.
-        const retryAfter = response.headers.get('retry-after');
+        const retryAfter = response.headers?.get?.('retry-after');
         const retryAfterMs = retryAfter ? Number.parseInt(retryAfter, 10) * 1000 : Number.NaN;
         const backoffMs = Number.isFinite(retryAfterMs)
           ? retryAfterMs

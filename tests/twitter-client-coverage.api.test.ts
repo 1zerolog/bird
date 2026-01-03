@@ -155,10 +155,14 @@ describe('TwitterClient API coverage', () => {
     it('returns an error for non-ok responses', async () => {
       const mockFetch = vi
         .fn()
+        .mockResolvedValueOnce(makeResponse({ ok: false, status: 500, text: async () => 'down' }))
+        .mockResolvedValueOnce(makeResponse({ ok: false, status: 500, text: async () => 'down' }))
         .mockResolvedValueOnce(makeResponse({ ok: false, status: 500, text: async () => 'down' }));
       global.fetch = mockFetch as unknown as typeof fetch;
 
       const client = new TwitterClient({ cookies: validCookies });
+      const clientPrivate = client as unknown as TwitterClientApiPrivate;
+      clientPrivate.getBookmarksQueryIds = async () => ['test'];
       const result = await client.getBookmarks(1);
 
       expect(result.success).toBe(false);
@@ -174,6 +178,8 @@ describe('TwitterClient API coverage', () => {
       global.fetch = mockFetch as unknown as typeof fetch;
 
       const client = new TwitterClient({ cookies: validCookies });
+      const clientPrivate = client as unknown as TwitterClientApiPrivate;
+      clientPrivate.getBookmarksQueryIds = async () => ['test'];
       const result = await client.getBookmarks(1);
 
       expect(result.success).toBe(false);
@@ -185,6 +191,8 @@ describe('TwitterClient API coverage', () => {
       global.fetch = mockFetch as unknown as typeof fetch;
 
       const client = new TwitterClient({ cookies: validCookies });
+      const clientPrivate = client as unknown as TwitterClientApiPrivate;
+      clientPrivate.getBookmarksQueryIds = async () => ['test'];
       const result = await client.getBookmarks(1);
 
       expect(result.success).toBe(false);
@@ -362,10 +370,14 @@ describe('TwitterClient API coverage', () => {
     it('returns an error for non-ok responses', async () => {
       const mockFetch = vi
         .fn()
+        .mockResolvedValueOnce(makeResponse({ ok: false, status: 500, text: async () => 'down' }))
+        .mockResolvedValueOnce(makeResponse({ ok: false, status: 500, text: async () => 'down' }))
         .mockResolvedValueOnce(makeResponse({ ok: false, status: 500, text: async () => 'down' }));
       global.fetch = mockFetch as unknown as typeof fetch;
 
       const client = new TwitterClient({ cookies: validCookies });
+      const clientPrivate = client as unknown as TwitterClientApiPrivate;
+      clientPrivate.getBookmarkFolderQueryIds = async () => ['test'];
       const result = await client.getBookmarkFolderTimeline('123', 1);
 
       expect(result.success).toBe(false);
@@ -381,6 +393,8 @@ describe('TwitterClient API coverage', () => {
       global.fetch = mockFetch as unknown as typeof fetch;
 
       const client = new TwitterClient({ cookies: validCookies });
+      const clientPrivate = client as unknown as TwitterClientApiPrivate;
+      clientPrivate.getBookmarkFolderQueryIds = async () => ['test'];
       const result = await client.getBookmarkFolderTimeline('123', 1);
 
       expect(result.success).toBe(false);
@@ -392,6 +406,8 @@ describe('TwitterClient API coverage', () => {
       global.fetch = mockFetch as unknown as typeof fetch;
 
       const client = new TwitterClient({ cookies: validCookies });
+      const clientPrivate = client as unknown as TwitterClientApiPrivate;
+      clientPrivate.getBookmarkFolderQueryIds = async () => ['test'];
       const result = await client.getBookmarkFolderTimeline('123', 1);
 
       expect(result.success).toBe(false);

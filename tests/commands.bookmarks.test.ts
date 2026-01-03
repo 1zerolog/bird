@@ -17,12 +17,6 @@ describe('bookmarks command', () => {
     } as unknown as CliContext;
 
     registerBookmarksCommand(program, ctx);
-    const command = program.commands.find((cmd) => cmd.name() === 'bookmarks');
-    if (!command) {
-      throw new Error('bookmarks command not registered');
-    }
-
-    const action = (command as { _actionHandler: (opts: Record<string, string>) => Promise<void> })._actionHandler;
     const exitSpy = vi
       .spyOn(process, 'exit')
       .mockImplementation(((code?: number) => {
@@ -31,7 +25,7 @@ describe('bookmarks command', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     try {
-      await expect(action({ maxPages: '2' })).rejects.toThrow('exit 1');
+      await expect(program.parseAsync(['node', 'bird', 'bookmarks', '--max-pages', '2'])).rejects.toThrow('exit 1');
       expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('--max-pages requires --all'));
     } finally {
       exitSpy.mockRestore();
