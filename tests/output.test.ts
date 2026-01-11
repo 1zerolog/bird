@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createCliContext } from '../src/cli/shared.js';
 import {
   formatStatsLine,
   formatTweetUrlLine,
@@ -8,6 +9,7 @@ import {
   resolveOutputConfigFromCommander,
   statusPrefix,
 } from '../src/lib/output.js';
+import type { TweetData } from '../src/lib/twitter-client-types.js';
 
 describe('output', () => {
   it('defaults to emoji + color + hyperlinks on TTY', () => {
@@ -117,5 +119,45 @@ describe('output', () => {
     const result = hyperlink('https://x.com/\u001btest\u0007', 'Hi\u001b\u0007', cfg);
     expect(result).not.toContain('\u001btest\u0007');
     expect(result).not.toContain('Hi\u001b\u0007');
+  });
+
+  it('printTweets respects emoji toggle for media/article/quotes', () => {
+    const tweet: TweetData = {
+      id: '1',
+      text: 'hello world',
+      author: { username: 'alice', name: 'Alice' },
+      media: [{ type: 'photo', url: 'https://img/test.jpg' }],
+      article: { title: 'Article title', previewText: 'Preview' },
+      quotedTweet: {
+        id: '2',
+        text: 'quoted text',
+        author: { username: 'bob', name: 'Bob' },
+        media: [{ type: 'video', url: 'https://vid/test.mp4' }],
+      },
+    };
+
+    const ctxEmoji = createCliContext([], {}, true);
+    const logEmoji = vi.spyOn(console, 'log').mockImplementation(() => {});
+    ctxEmoji.printTweets([tweet]);
+    const emojiOutput = logEmoji.mock.calls.flat().join('\n');
+    logEmoji.mockRestore();
+
+    expect(emojiOutput).toContain('📰 Article title');
+    expect(emojiOutput).toContain('🖼️ https://img/test.jpg');
+    expect(emojiOutput).toContain('┌─ QT @bob:');
+    expect(emojiOutput).toContain('🎬 https://vid/test.mp4');
+
+    const ctxPlain = createCliContext(['--plain'], {}, true);
+    const logPlain = vi.spyOn(console, 'log').mockImplementation(() => {});
+    ctxPlain.printTweets([tweet]);
+    const plainOutput = logPlain.mock.calls.flat().join('\n');
+    logPlain.mockRestore();
+
+    expect(plainOutput).toContain('Article: Article title');
+    expect(plainOutput).toContain('PHOTO: https://img/test.jpg');
+    expect(plainOutput).toContain('QT @bob:');
+    expect(plainOutput).toContain('VIDEO: https://vid/test.mp4');
+    expect(plainOutput).not.toContain('📰');
+    expect(plainOutput).not.toContain('🖼️');
   });
 });
