@@ -1,31 +1,31 @@
 # Changelog
 
-## 0.7.0 — Unreleased
+## 0.7.0 — 2026-01-12
 
 ### Added
-- `list-timeline` now supports pagination (`--all`, `--max-pages`, `--cursor`) (#30) — thanks @zheli.
 - `home` command for the "For You" and "Following" home timelines (#31) — thanks @odysseus0.
-- Rich text output now shows article previews, quoted tweets, and media links (#32) — thanks @odysseus0.
+- `news`/`trending` command for Explore tabs with AI-curated headlines (#39) — thanks @aavetis.
 - `user-tweets` command to fetch a user's profile timeline (#34) — thanks @crcatala.
 - `replies` and `thread` now support pagination (`--all`, `--max-pages`, `--cursor`, `--delay`) (#35) — thanks @crcatala.
-- Long-form article tweets now render rich Draft.js content blocks/entities (#36) — thanks @crcatala.
-- `news`/`trending` command for Explore tabs with AI-curated headlines (#39) — thanks @aavetis.
 - `search` now supports pagination (`--all`, `--max-pages`, `--cursor`) (#42) — thanks @pjtf93.
 - `likes` now supports pagination (`--all`, `--max-pages`, `--cursor`) (#44) — thanks @jsholmes.
+- `list-timeline` now supports pagination (`--all`, `--max-pages`, `--cursor`) (#30) — thanks @zheli.
+- Rich text output now shows article previews, quoted tweets, and media links (#32) — thanks @odysseus0.
+- Long-form article tweets now render rich Draft.js content blocks/entities (#36) — thanks @crcatala.
 
 ### Changed
 - Library typing: `SearchResult` is now a discriminated union (so `error` only exists when `success: false`).
 
 ### Fixed
+- Lists GraphQL feature flags updated to prevent 400s (#27) — thanks @zheli.
+- Lists feature overrides now scope new GraphQL flags correctly (#50) — thanks @ryanh-ai.
+- Tweet detail parsing now tolerates partial GraphQL errors when usable data exists (#48) — thanks @jsholmes.
+- News output now respects `--tweets-per-item`, keeps unique IDs, and parses non-add entry instructions (#39) — thanks @aavetis.
+- Following/followers pagination now guards repeat cursors and standardizes JSON output (#28) — thanks @malpern.
+- Likes pagination now follows cursors and avoids stalling on duplicate pages (#12) — thanks @titouv.
 - macOS cookie extraction now supports Brave keychain storage (#40) — thanks @gakonst.
 - Terminal hyperlinks now sanitize control characters before emitting OSC 8 sequences (#29) — thanks @mafulafunk.
-- Following/followers pagination now guards repeat cursors and standardizes JSON output (#28) — thanks @malpern.
-- Lists GraphQL feature flags updated to prevent 400s (#27) — thanks @zheli.
-- Likes pagination now follows cursors and avoids stalling on duplicate pages (#12) — thanks @titouv.
-- Tweet detail parsing now tolerates partial GraphQL errors when usable data exists (#48) — thanks @jsholmes.
-- Lists feature overrides now scope new GraphQL flags correctly (#50) — thanks @ryanh-ai.
 - `pnpm run build:dist` now succeeds after tightening JSON/pagination option typing in tweet output commands.
-- News output now respects `--tweets-per-item`, keeps unique IDs, and parses non-add entry instructions (#39) — thanks @aavetis.
 
 ### Tests
 - Following: split following/likes tests + cover cursor handling (#33) — thanks @VACInc.
