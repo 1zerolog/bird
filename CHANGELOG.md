@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.1 — 2026-01-19
+## 0.8.0 — 2026-01-19
 
 ### Added
 - `bookmarks` thread expansion controls (`--expand-root-only`, `--author-chain`, `--author-only`, `--full-chain-only`, `--include-ancestor-branches`, `--include-parent`, `--thread-meta`, `--sort-chronological`) for richer context exports (#55) — thanks @kkretschmer2.
