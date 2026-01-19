@@ -36,7 +36,9 @@ const MixedTwitterClient = withNews(
       withUsers(
         withLists(
           withHome(
-            withTimelines(withSearch(withTweetDetails(withPosting(withFollow(withBookmarks(withMedia(TwitterClientBase))))))),
+            withTimelines(
+              withSearch(withTweetDetails(withPosting(withFollow(withBookmarks(withMedia(TwitterClientBase)))))),
+            ),
           ),
         ),
       ),

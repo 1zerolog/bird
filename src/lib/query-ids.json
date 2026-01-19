@@ -1,6 +1,8 @@
 {
   "CreateTweet": "nmdAQXJDxw6-0KKF2on7eA",
   "CreateRetweet": "LFho5rIi4xcKO90p9jwG7A",
+  "CreateFriendship": "8h9JVdV8dlSyqyRDJEPCsA",
+  "DestroyFriendship": "ppXWuagMNXgvzx6WoXBW0Q",
   "FavoriteTweet": "lI07N6Otwv1PhnEgXILM7A",
   "DeleteBookmark": "Wlmlj2-xzyS1GN3a6cj-mQ",
   "TweetDetail": "_NvJCnIjOW__EP5-RF197A",

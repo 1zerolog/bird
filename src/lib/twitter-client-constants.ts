@@ -16,6 +16,8 @@ export const SETTINGS_NAME_REGEX = /"name":"([^"\\]*(?:\\.[^"\\]*)*)"/;
 export const FALLBACK_QUERY_IDS = {
   CreateTweet: 'TAJw1rBsjAtdNgTdlo2oeg',
   CreateRetweet: 'ojPdsZsimiJrUGLR1sjUtA',
+  CreateFriendship: '8h9JVdV8dlSyqyRDJEPCsA',
+  DestroyFriendship: 'ppXWuagMNXgvzx6WoXBW0Q',
   FavoriteTweet: 'lI07N6Otwv1PhnEgXILM7A',
   DeleteBookmark: 'Wlmlj2-xzyS1GN3a6cj-mQ',
   TweetDetail: '97JF30KziU00483E_8elBA',

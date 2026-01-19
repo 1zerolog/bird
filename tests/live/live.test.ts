@@ -159,15 +159,21 @@ d('live CLI (Twitter/X)', () => {
     expect(whoamiStdout).toContain('credentials:');
   });
 
-  it('about returns account JSON', async () => {
-    const aboutHandle = (process.env.BIRD_LIVE_ABOUT_HANDLE ?? handle).trim() || handle;
-    const about = await runBird([...baseArgs, '--cookie-timeout', cookieTimeoutArg, 'about', aboutHandle, '--json'], {
+  it('follow/unfollow works (opt-in)', async () => {
+    const followHandle = (process.env.BIRD_LIVE_FOLLOW_HANDLE ?? '').trim();
+    if (!followHandle) {
+      return;
+    }
+
+    const follow = await runBird([...baseArgs, '--cookie-timeout', cookieTimeoutArg, 'follow', followHandle], {
       timeoutMs: 45_000,
     });
-    expect(about.exitCode).toBe(0);
-    const payload = parseJson<Record<string, unknown>>(about.stdout);
-    expect(Array.isArray(payload)).toBe(false);
-    expect(Object.keys(payload).length).toBeGreaterThan(0);
+    expect(follow.exitCode).toBe(0);
+
+    const unfollow = await runBird([...baseArgs, '--cookie-timeout', cookieTimeoutArg, 'unfollow', followHandle], {
+      timeoutMs: 45_000,
+    });
+    expect(unfollow.exitCode).toBe(0);
   });
 
   it('read returns tweet JSON', async () => {

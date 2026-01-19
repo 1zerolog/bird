@@ -3,30 +3,35 @@ import type { CliContext } from '../cli/shared.js';
 import { normalizeHandle } from '../lib/normalize-handle.js';
 import { TwitterClient } from '../lib/twitter-client.js';
 
+const ONLY_DIGITS_REGEX = /^\d+$/;
+
 async function resolveUserId(
   client: TwitterClient,
   usernameOrId: string,
   ctx: CliContext,
 ): Promise<{ userId: string; username?: string } | null> {
-  // If it looks like a numeric ID, use it directly
-  if (/^\d+$/.test(usernameOrId)) {
-    return { userId: usernameOrId };
-  }
+  const raw = usernameOrId.trim();
+  const isNumeric = ONLY_DIGITS_REGEX.test(raw);
 
   // Otherwise, treat as username and look up
-  const handle = normalizeHandle(usernameOrId);
-  if (!handle) {
-    console.error(`${ctx.p('err')}Invalid username: ${usernameOrId}`);
-    return null;
+  const handle = normalizeHandle(raw);
+  if (handle) {
+    const lookup = await client.getUserIdByUsername(handle);
+    if (lookup.success && lookup.userId) {
+      return { userId: lookup.userId, username: lookup.username };
+    }
+    if (!isNumeric) {
+      console.error(`${ctx.p('err')}Failed to find user @${handle}: ${lookup.error ?? 'Unknown error'}`);
+      return null;
+    }
   }
 
-  const lookup = await client.getUserIdByUsername(handle);
-  if (!lookup.success || !lookup.userId) {
-    console.error(`${ctx.p('err')}Failed to find user @${handle}: ${lookup.error ?? 'Unknown error'}`);
-    return null;
+  if (isNumeric) {
+    return { userId: raw };
   }
 
-  return { userId: lookup.userId, username: lookup.username };
+  console.error(`${ctx.p('err')}Invalid username: ${usernameOrId}`);
+  return null;
 }
 
 export function registerFollowCommands(program: Command, ctx: CliContext): void {

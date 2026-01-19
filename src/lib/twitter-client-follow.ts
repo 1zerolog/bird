@@ -48,10 +48,7 @@ export function withFollow<TBase extends AbstractConstructor<TwitterClientBase>>
       return this.followViaGraphQL(userId, false);
     }
 
-    private async followViaRest(
-      userId: string,
-      action: 'create' | 'destroy',
-    ): Promise<FollowMutationResult> {
+    private async followViaRest(userId: string, action: 'create' | 'destroy'): Promise<FollowMutationResult> {
       const urls = [
         `https://x.com/i/api/1.1/friendships/${action}.json`,
         `https://api.twitter.com/1.1/friendships/${action}.json`,
@@ -77,7 +74,7 @@ export function withFollow<TBase extends AbstractConstructor<TwitterClientBase>>
 
           if (!response.ok) {
             const text = await response.text();
-            
+
             // Parse error response
             try {
               const errorData = JSON.parse(text) as { errors?: Array<{ code: number; message: string }> };
@@ -138,70 +135,98 @@ export function withFollow<TBase extends AbstractConstructor<TwitterClientBase>>
 
     private async followViaGraphQL(userId: string, follow: boolean): Promise<FollowMutationResult> {
       const operationName = follow ? 'CreateFriendship' : 'DestroyFriendship';
-      
-      // Known query IDs for friendship operations
-      const queryIds = follow
-        ? ['8h9JVdV8dlSyqyRDJEPCsA', 'OPwKc1HXnBT_bWXfAlo-9g']
-        : ['8h9JVdV8dlSyqyRDJEPCsA', 'ppXWuagMNXgvzx6WoXBW0Q'];
-
       const variables = {
         user_id: userId,
       };
 
-      let lastError: string | undefined;
+      const tryOnce = async () => {
+        let lastError: string | undefined;
+        let had404 = false;
+        const queryIds = await this.getFollowQueryIds(follow);
 
-      for (const queryId of queryIds) {
-        const url = `${TWITTER_API_BASE}/${queryId}/${operationName}`;
+        for (const queryId of queryIds) {
+          const url = `${TWITTER_API_BASE}/${queryId}/${operationName}`;
 
-        try {
-          const response = await this.fetchWithTimeout(url, {
-            method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify({ variables, queryId }),
-          });
+          try {
+            const response = await this.fetchWithTimeout(url, {
+              method: 'POST',
+              headers: this.getHeaders(),
+              body: JSON.stringify({ variables, queryId }),
+            });
 
-          if (response.status === 404) {
-            lastError = `HTTP 404`;
-            continue;
-          }
+            if (response.status === 404) {
+              had404 = true;
+              lastError = 'HTTP 404';
+              continue;
+            }
 
-          if (!response.ok) {
-            const text = await response.text();
-            lastError = `HTTP ${response.status}: ${text.slice(0, 200)}`;
-            continue;
-          }
+            if (!response.ok) {
+              const text = await response.text();
+              lastError = `HTTP ${response.status}: ${text.slice(0, 200)}`;
+              continue;
+            }
 
-          const data = (await response.json()) as {
-            data?: {
-              user?: {
-                result?: {
-                  rest_id?: string;
-                  legacy?: {
-                    screen_name?: string;
+            const data = (await response.json()) as {
+              data?: {
+                user?: {
+                  result?: {
+                    rest_id?: string;
+                    legacy?: {
+                      screen_name?: string;
+                    };
                   };
                 };
               };
+              errors?: Array<{ message: string }>;
             };
-            errors?: Array<{ message: string }>;
-          };
 
-          if (data.errors && data.errors.length > 0) {
-            lastError = data.errors.map((e) => e.message).join(', ');
-            continue;
+            if (data.errors && data.errors.length > 0) {
+              lastError = data.errors.map((e) => e.message).join(', ');
+              continue;
+            }
+
+            const result = data.data?.user?.result;
+            return {
+              success: true as const,
+              userId: result?.rest_id,
+              username: result?.legacy?.screen_name,
+              had404,
+            };
+          } catch (error) {
+            lastError = error instanceof Error ? error.message : String(error);
           }
-
-          const result = data.data?.user?.result;
-          return {
-            success: true,
-            userId: result?.rest_id,
-            username: result?.legacy?.screen_name,
-          };
-        } catch (error) {
-          lastError = error instanceof Error ? error.message : String(error);
         }
+
+        return {
+          success: false as const,
+          error: lastError ?? `Unknown error during ${operationName}`,
+          had404,
+        };
+      };
+
+      const firstAttempt = await tryOnce();
+      if (firstAttempt.success) {
+        return { success: true, userId: firstAttempt.userId, username: firstAttempt.username };
       }
 
-      return { success: false, error: lastError ?? `Unknown error during ${operationName}` };
+      if (firstAttempt.had404) {
+        await this.refreshQueryIds();
+        const secondAttempt = await tryOnce();
+        if (secondAttempt.success) {
+          return { success: true, userId: secondAttempt.userId, username: secondAttempt.username };
+        }
+        return { success: false, error: secondAttempt.error };
+      }
+
+      return { success: false, error: firstAttempt.error };
+    }
+
+    private async getFollowQueryIds(follow: boolean): Promise<string[]> {
+      const primary = await this.getQueryId(follow ? 'CreateFriendship' : 'DestroyFriendship');
+      const fallbacks = follow
+        ? ['8h9JVdV8dlSyqyRDJEPCsA', 'OPwKc1HXnBT_bWXfAlo-9g']
+        : ['ppXWuagMNXgvzx6WoXBW0Q', '8h9JVdV8dlSyqyRDJEPCsA'];
+      return Array.from(new Set([primary, ...fallbacks]));
     }
   }
 
