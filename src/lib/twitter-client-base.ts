@@ -108,13 +108,13 @@ export abstract class TwitterClientBase {
   protected getBaseHeaders(): Record<string, string> {
     const headers: Record<string, string> = {
       accept: '*/*',
-      'accept-language': 'en-US,en;q=0.9',
+      'accept-language': 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7',
       authorization:
         'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
       'x-csrf-token': this.ct0,
       'x-twitter-auth-type': 'OAuth2Session',
       'x-twitter-active-user': 'yes',
-      'x-twitter-client-language': 'en',
+      'x-twitter-client-language': 'tr',
       'x-client-uuid': this.clientUuid,
       'x-twitter-client-deviceid': this.clientDeviceId,
       'x-client-transaction-id': this.createTransactionId(),
