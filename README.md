@@ -19,7 +19,7 @@ pnpm add -g @steipete/bird
 bun add -g @steipete/bird
 
 # tek seferlik (kurulum olmadan)
-bunx @steipete/bird whoami
+bunx @steipete/bird benkimim
 ```
 
 Homebrew (macOS, önceden derlenmiş Bun ikili dosyası):
@@ -32,61 +32,61 @@ brew install steipete/tap/bird
 
 ```bash
 # Giriş yapılan hesabı göster
-bird whoami
+bird benkimim
 
 # Komut yardımını keşfet
-bird help whoami
+bird help benkimim
 
 # Bir tweet oku (URL veya ID)
-bird read https://x.com/user/status/1234567890123456789
+bird oku https://x.com/user/status/1234567890123456789
 bird 1234567890123456789 --json
 
 # Konu + yanıtlar
-bird thread https://x.com/user/status/1234567890123456789
-bird replies 1234567890123456789
-bird replies 1234567890123456789 --max-pages 3 --json
-bird thread 1234567890123456789 --max-pages 3 --json
+bird konu https://x.com/user/status/1234567890123456789
+bird yanitlar 1234567890123456789
+bird yanitlar 1234567890123456789 --max-pages 3 --json
+bird konu 1234567890123456789 --max-pages 3 --json
 
 # Arama + bahsetmeler
-bird search "from:steipete" -n 5
-bird mentions -n 5
-bird mentions --user @steipete -n 5
+bird ara "from:steipete" -n 5
+bird bahsetmeler -n 5
+bird bahsetmeler --user @steipete -n 5
 
 # Kullanıcı tweetleri (profil zaman akışı)
-bird user-tweets @steipete -n 20
-bird user-tweets @steipete -n 50 --json
+bird kullanici-tweetleri @steipete -n 20
+bird kullanici-tweetleri @steipete -n 50 --json
 
 # Yer imleri
-bird bookmarks -n 5
-bird bookmarks --folder-id 123456789123456789 -n 5 # https://x.com/i/bookmarks/<folder-id>
-bird bookmarks --all --json
-bird bookmarks --all --max-pages 2 --json
-bird bookmarks --include-parent --json
-bird unbookmark 1234567890123456789
-bird unbookmark https://x.com/user/status/1234567890123456789
+bird yerimleri -n 5
+bird yerimleri --folder-id 123456789123456789 -n 5 # https://x.com/i/bookmarks/<folder-id>
+bird yerimleri --all --json
+bird yerimleri --all --max-pages 2 --json
+bird yerimleri --include-parent --json
+bird yerimi-kaldir 1234567890123456789
+bird yerimi-kaldir https://x.com/user/status/1234567890123456789
 
 # Beğeniler
-bird likes -n 5
+bird begeniler -n 5
 
 # Haberler ve gündem konuları (Keşfet sekmelerinden AI-küratörlüğünde)
-bird news --ai-only -n 10
-bird news --sports -n 5
+bird haberler --ai-only -n 10
+bird haberler --sports -n 5
 
 # Listeler
-bird list-timeline 1234567890 -n 20
-bird list-timeline https://x.com/i/lists/1234567890 --all --json
-bird list-timeline 1234567890 --max-pages 3 --json
+bird liste-akisi 1234567890 -n 20
+bird liste-akisi https://x.com/i/lists/1234567890 --all --json
+bird liste-akisi 1234567890 --max-pages 3 --json
 
 # Takip edilenler (kimi takip ediyorsunuz)
-bird following -n 20
-bird following --user 12345678 -n 10  # kullanıcı ID'siyle
+bird takipedilenler -n 20
+bird takipedilenler --user 12345678 -n 10  # kullanıcı ID'siyle
 
 # Takipçiler (sizi kim takip ediyor)
-bird followers -n 20
-bird followers --user 12345678 -n 10  # kullanıcı ID'siyle
+bird takipciler -n 20
+bird takipciler --user 12345678 -n 10  # kullanıcı ID'siyle
 
 # GraphQL sorgu kimlikleri önbelleğini yenile (yeniden derleme olmadan)
-bird query-ids --fresh
+bird sorgu-idleri --fresh
 ```
 
 ## Haberler & Gündem
@@ -95,25 +95,25 @@ X'in Keşfet sayfası sekmelerinden AI-küratörlüğünde haberler ve gündem k
 
 ```bash
 # Tüm sekmelerden 10 haber öğesi getir (varsayılan: Senin İçin, Haberler, Spor, Eğlence)
-bird news -n 10
+bird haberler -n 10
 
 # Sadece AI-küratörlüğünde haberleri getir (normal gündemleri filtreler)
-bird news --ai-only -n 20
+bird haberler --ai-only -n 20
 
 # Belirli sekmelerden getir
-bird news --news-only --ai-only -n 10
-bird news --sports -n 15
-bird news --entertainment --ai-only -n 5
+bird haberler --news-only --ai-only -n 10
+bird haberler --sports -n 15
+bird haberler --entertainment --ai-only -n 5
 
 # Her haber öğesi için ilgili tweetleri dahil et
-bird news --with-tweets --tweets-per-item 3 -n 10
+bird haberler --with-tweets --tweets-per-item 3 -n 10
 
 # Birden fazla sekme filtresini birleştir
-bird news --sports --entertainment -n 20
+bird haberler --sports --entertainment -n 20
 
 # JSON çıktısı
-bird news --json -n 5
-bird news --json-full --ai-only -n 10  # ham API yanıtını içerir
+bird haberler --json -n 5
+bird haberler --json-full --ai-only -n 10  # ham API yanıtını içerir
 ```
 
 Sekme seçenekleri (birleştirilebilir):
@@ -167,30 +167,30 @@ Alanlar:
 
 ## Komutlar
 
-- `bird tweet "<metin>"` — yeni bir tweet gönder.
-- `bird reply <tweet-id-veya-url> "<metin>"` — ID veya URL kullanarak bir tweete yanıt ver.
+- `bird tweetle "<metin>"` — yeni bir tweet gönder.
+- `bird yanitla <tweet-id-veya-url> "<metin>"` — ID veya URL kullanarak bir tweete yanıt ver.
 - `bird help [komut]` — yardım göster (veya bir alt komut için yardım).
-- `bird query-ids [--fresh] [--json]` — önbelleğe alınmış GraphQL sorgu kimliklerini incele veya yenile.
-- `bird home [-n sayı] [--following] [--json] [--json-full]` — ana zaman akışınızı (Senin İçin) veya Takip Edilen akışını getir.
-- `bird read <tweet-id-veya-url> [--json]` — tweet içeriğini metin veya JSON olarak getir.
-- `bird <tweet-id-veya-url> [--json]` — sadece bir URL veya ID sağlandığında `read` için kısayol.
-- `bird replies <tweet-id-veya-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — bir tweete verilen yanıtları listele.
-- `bird thread <tweet-id-veya-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — tam konuşma konusunu göster.
-- `bird search "<sorgu>" [-n sayı] [--all] [--max-pages n] [--cursor string] [--json]` — bir sorguyla eşleşen tweetleri ara; `--max-pages` için `--all` veya `--cursor` gerekir.
-- `bird mentions [-n sayı] [--user @kullanıcı] [--json]` — bir kullanıcıdan bahseden tweetleri bul (varsayılan olarak kimliği doğrulanmış kullanıcı).
-- `bird user-tweets <@kullanıcı> [-n sayı] [--cursor string] [--max-pages n] [--delay ms] [--json]` — bir kullanıcının profil zaman akışından tweetleri getir.
-- `bird bookmarks [-n sayı] [--folder-id id] [--all] [--max-pages n] [--cursor string] [--expand-root-only] [--author-chain] [--author-only] [--full-chain-only] [--include-ancestor-branches] [--include-parent] [--thread-meta] [--sort-chronological] [--json]` — yer imlerinizi listele (veya belirli bir yer imi klasörü); genişletme bayrakları konu bağlamını kontrol eder; `--max-pages` için `--all` veya `--cursor` gerekir.
-- `bird unbookmark <tweet-id-veya-url...>` — tweet ID veya URL ile bir veya daha fazla yer imini kaldır.
-- `bird likes [-n sayı] [--all] [--max-pages n] [--cursor string] [--json] [--json-full]` — beğenilen tweetlerinizi listele; `--max-pages` için `--all` veya `--cursor` gerekir.
-- `bird news [-n sayı] [--ai-only] [--with-tweets] [--tweets-per-item n] [--for-you] [--news-only] [--sports] [--entertainment] [--trending-only] [--json]` — X'in Keşfet sekmelerinden haber ve gündem konularını getir.
-- `bird trending` — `news` komutu için takma ad.
-- `bird lists [--member-of] [-n sayı] [--json]` — listelerinizi listele (sahip olunan veya üyelikler).
-- `bird list-timeline <liste-id-veya-url> [-n sayı] [--all] [--max-pages n] [--cursor string] [--json]` — bir liste zaman akışından tweetleri getir; `--max-pages`, `--all` gerektirir.
-- `bird following [--user <kullanıcıId>] [-n sayı] [--cursor string] [--all] [--max-pages n] [--json]` — sizin (veya başka bir kullanıcının) takip ettiği kullanıcıları listele; `--max-pages` için `--all` gerekir.
-- `bird followers [--user <kullanıcıId>] [-n sayı] [--cursor string] [--all] [--max-pages n] [--json]` — sizi (veya başka bir kullanıcıyı) takip eden kullanıcıları listele; `--max-pages` için `--all` gerekir.
-- `bird about <@kullanıcı> [--json]` — bir kullanıcı için hesap kaynağı ve konum bilgisi al.
-- `bird whoami` — çerezlerinizin hangi Twitter hesabına ait olduğunu yazdır.
-- `bird check` — hangi kimlik bilgilerinin mevcut olduğunu ve nereden kaynaklandığını göster.
+- `bird sorgu-idleri [--fresh] [--json]` — önbelleğe alınmış GraphQL sorgu kimliklerini incele veya yenile.
+- `bird anasayfa [-n sayı] [--following] [--json] [--json-full]` — ana zaman akışınızı (Senin İçin) veya Takip Edilen akışını getir.
+- `bird oku <tweet-id-veya-url> [--json]` — tweet içeriğini metin veya JSON olarak getir.
+- `bird <tweet-id-veya-url> [--json]` — sadece bir URL veya ID sağlandığında `oku` için kısayol.
+- `bird yanitlar <tweet-id-veya-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — bir tweete verilen yanıtları listele.
+- `bird konu <tweet-id-veya-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — tam konuşma konusunu göster.
+- `bird ara "<sorgu>" [-n sayı] [--all] [--max-pages n] [--cursor string] [--json]` — bir sorguyla eşleşen tweetleri ara; `--max-pages` için `--all` veya `--cursor` gerekir.
+- `bird bahsetmeler [-n sayı] [--user @kullanıcı] [--json]` — bir kullanıcıdan bahseden tweetleri bul (varsayılan olarak kimliği doğrulanmış kullanıcı).
+- `bird kullanici-tweetleri <@kullanıcı> [-n sayı] [--cursor string] [--max-pages n] [--delay ms] [--json]` — bir kullanıcının profil zaman akışından tweetleri getir.
+- `bird yerimleri [-n sayı] [--folder-id id] [--all] [--max-pages n] [--cursor string] [--expand-root-only] [--author-chain] [--author-only] [--full-chain-only] [--include-ancestor-branches] [--include-parent] [--thread-meta] [--sort-chronological] [--json]` — yer imlerinizi listele (veya belirli bir yer imi klasörü); genişletme bayrakları konu bağlamını kontrol eder; `--max-pages` için `--all` veya `--cursor` gerekir.
+- `bird yerimi-kaldir <tweet-id-veya-url...>` — tweet ID veya URL ile bir veya daha fazla yer imini kaldır.
+- `bird begeniler [-n sayı] [--all] [--max-pages n] [--cursor string] [--json] [--json-full]` — beğenilen tweetlerinizi listele; `--max-pages` için `--all` veya `--cursor` gerekir.
+- `bird haberler [-n sayı] [--ai-only] [--with-tweets] [--tweets-per-item n] [--for-you] [--news-only] [--sports] [--entertainment] [--trending-only] [--json]` — X'in Keşfet sekmelerinden haber ve gündem konularını getir.
+- `bird trending` — `haberler` komutu için takma ad.
+- `bird listeler [--member-of] [-n sayı] [--json]` — listelerinizi listele (sahip olunan veya üyelikler).
+- `bird liste-akisi <liste-id-veya-url> [-n sayı] [--all] [--max-pages n] [--cursor string] [--json]` — bir liste zaman akışından tweetleri getir; `--max-pages`, `--all` gerektirir.
+- `bird takipedilenler [--user <kullanıcıId>] [-n sayı] [--cursor string] [--all] [--max-pages n] [--json]` — sizin (veya başka bir kullanıcının) takip ettiği kullanıcıları listele; `--max-pages` için `--all` gerekir.
+- `bird takipciler [--user <kullanıcıId>] [-n sayı] [--cursor string] [--all] [--max-pages n] [--json]` — sizi (veya başka bir kullanıcıyı) takip eden kullanıcıları listele; `--max-pages` için `--all` gerekir.
+- `bird hakkinda <@kullanıcı> [--json]` — bir kullanıcı için hesap kaynağı ve konum bilgisi al.
+- `bird benkimim` — çerezlerinizin hangi Twitter hesabına ait olduğunu yazdır.
+- `bird kontrol` — hangi kimlik bilgilerinin mevcut olduğunu ve nereden kaynaklandığını göster.
 
 Yer imleri bayrakları:
 - `--expand-root-only`: konuları sadece yer imi bir kök tweet olduğunda genişlet.
