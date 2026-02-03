@@ -41,7 +41,7 @@ type UserListCommandOpts = {
 };
 
 type UserListCommandSpec = {
-  name: 'following' | 'followers';
+  name: 'takipedilenler' | 'takipciler';
   description: string;
   fetch: (
     client: TwitterClient,
@@ -214,19 +214,19 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
   };
 
   registerUserListCommand({
-    name: 'following',
+    name: 'takipedilenler',
     description: 'Sizin (veya başka bir kullanıcının) takip ettiği kullanıcıları getir',
     fetch: (client, userId, count, cursor) => client.getFollowing(userId, count, cursor),
   });
 
   registerUserListCommand({
-    name: 'followers',
+    name: 'takipciler',
     description: 'Sizi (veya başka bir kullanıcıyı) takip eden kullanıcıları getir',
     fetch: (client, userId, count, cursor) => client.getFollowers(userId, count, cursor),
   });
 
   program
-    .command('likes')
+    .command('begeniler')
     .description('Beğenilen tweetlerinizi getir')
     .option('-n, --count <sayı>', 'Getirilecek beğeni sayısı', '20')
     .option('--all', 'Tüm beğenileri getir (sayfallı)')
@@ -297,7 +297,7 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
     );
 
   program
-    .command('whoami')
+    .command('benkimim')
     .description('Geçerli kimlik bilgilerinin hangi Twitter hesabına ait olduğunu göster')
     .action(async () => {
       const opts = program.opts();
@@ -336,7 +336,7 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
     });
 
   program
-    .command('about')
+    .command('hakkinda')
     .description('Bir kullanıcı için hesap kaynağı ve konum bilgisi al')
     .argument('<kullanıcı_adı>', 'Twitter kullanıcı adı (@ ile veya @ olmadan)')
     .option('--json', 'JSON olarak çıktı ver')

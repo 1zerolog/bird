@@ -41,7 +41,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
           console.log(formatStatsLine(result.tweet, ctx.getOutput()));
         }
       } else {
-        console.error(`${ctx.p('err')}Tweet okunamadı: ${res.error}`);
+        console.error(`${ctx.p('err')}Tweet okunamadı: ${result.error}`);
         process.exit(1);
       }
     });
@@ -117,7 +117,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
         }
 
         if (!result.success) {
-          console.error(`${ctx.p('err')}Yanıtlar getirilemedi: ${res.error}`);
+          console.error(`${ctx.p('err')}Yanıtlar getirilemedi: ${result.error}`);
           process.exit(1);
         }
       },
@@ -196,7 +196,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
         }
 
         if (!result.success) {
-          console.error(`${ctx.p('err')}Thread getirilemedi: ${res.error}`);
+          console.error(`${ctx.p('err')}Thread getirilemedi: ${result.error}`);
           process.exit(1);
         }
       },
