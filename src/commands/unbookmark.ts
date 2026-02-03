@@ -5,8 +5,8 @@ import { TwitterClient } from '../lib/twitter-client.js';
 export function registerUnbookmarkCommand(program: Command, ctx: CliContext): void {
   program
     .command('unbookmark')
-    .description('Remove bookmarked tweets')
-    .argument('<tweet-id-or-url...>', 'Tweet IDs or URLs to remove from bookmarks')
+    .description('Yer imlerinden tweetleri kaldır')
+    .argument('<tweet-ids...>', 'Kaldırılacak tweet ID veya URL\'leri')
     .action(async (tweetIdOrUrls: string[]) => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
@@ -18,7 +18,7 @@ export function registerUnbookmarkCommand(program: Command, ctx: CliContext): vo
       }
 
       if (!cookies.authToken || !cookies.ct0) {
-        console.error(`${ctx.p('err')}Missing required credentials`);
+        console.error(`${ctx.p('err')}Gerekli kimlik bilgileri eksik`);
         process.exit(1);
       }
 
@@ -29,10 +29,10 @@ export function registerUnbookmarkCommand(program: Command, ctx: CliContext): vo
         const tweetId = ctx.extractTweetId(input);
         const result = await client.unbookmark(tweetId);
         if (result.success) {
-          console.log(`${ctx.p('ok')}Removed bookmark for ${tweetId}`);
+          console.log(`${ctx.p('ok')}${tweetId} yer imlerinden kaldırıldı`);
         } else {
           failures += 1;
-          console.error(`${ctx.p('err')}Failed to remove bookmark for ${tweetId}: ${result.error}`);
+          console.error(`${ctx.p('err')}${tweetId} kaldırılamadı: ${result.error}`);
         }
       }
 

@@ -9,22 +9,22 @@ import type { TweetData, TweetWithMeta } from '../lib/twitter-client-types.js';
 export function registerBookmarksCommand(program: Command, ctx: CliContext): void {
   program
     .command('bookmarks')
-    .description('Get your bookmarked tweets')
-    .option('-n, --count <number>', 'Number of bookmarks to fetch', '20')
+    .description('Yer imlerini getir')
+    .option('-n, --count <sayı>', 'Getirilecek yer imi sayısı', '20')
     .option('--folder-id <id>', 'Bookmark folder (collection) id')
     .option('--all', 'Fetch all bookmarks (paged)')
     .option('--max-pages <number>', 'Stop after N pages when using --all')
     .option('--cursor <string>', 'Resume pagination from a cursor')
     .option('--expand-root-only', 'Only expand threads when bookmarked tweet is root')
-    .option('--author-chain', 'Only include author self-reply chains connected to the bookmark')
+    .option('--author-chain', 'Sadece orijinal yazara ait zincirleri dahil et')
     .option('--author-only', 'Include all tweets from bookmarked tweet author in thread')
-    .option('--full-chain-only', 'Save entire reply chain connected to the bookmarked tweet')
+    .option('--full-chain-only', 'Sadece tam zincirleri dahil et (bir tweet ile başlayıp aynı tweet ile biten)')
     .option('--include-ancestor-branches', 'Include sibling branches for ancestors when using --full-chain-only')
     .option('--include-parent', 'Include direct parent tweet for non-root bookmarks')
     .option('--thread-meta', 'Add metadata fields (isThread, threadPosition, etc.)')
     .option('--sort-chronological', 'Sort output globally oldest -> newest')
-    .option('--json', 'Output as JSON')
-    .option('--json-full', 'Output as JSON with full raw API response in _raw field')
+    .option('--json', 'JSON olarak çıktı ver')
+    .option('--json-full', 'Ham API yanıtı ile birlikte JSON olarak çıktı ver')
     .action(
       async (cmdOpts: {
         count?: string;
@@ -61,7 +61,7 @@ export function registerBookmarksCommand(program: Command, ctx: CliContext): voi
         }
 
         if (!cookies.authToken || !cookies.ct0) {
-          console.error(`${ctx.p('err')}Missing required credentials`);
+          console.error(`${ctx.p('err')}Gerekli kimlik bilgileri eksik`);
           process.exit(1);
         }
 
@@ -93,14 +93,14 @@ export function registerBookmarksCommand(program: Command, ctx: CliContext): voi
             : await client.getBookmarks(count, timelineOptions);
 
         if (!result.success) {
-          console.error(`${ctx.p('err')}Failed to fetch bookmarks: ${result.error}`);
+          console.error(`${ctx.p('err')}Yer imleri getirilemedi: ${result.error}`);
           process.exit(1);
         }
 
         if (cmdOpts.authorChain && (cmdOpts.authorOnly || cmdOpts.fullChainOnly)) {
           console.error(
             `${ctx.p('warn')}--author-chain already limits to the connected self-reply chain; ` +
-              'other chain filters are redundant.',
+            'other chain filters are redundant.',
           );
         }
         if (cmdOpts.includeAncestorBranches && !cmdOpts.fullChainOnly) {

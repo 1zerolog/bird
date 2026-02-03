@@ -1,63 +1,62 @@
-# bird 🐦 — fast X CLI for tweeting, replying, and reading
+# bird 🐦 — tweet atma, yanıtlama ve okuma için hızlı X CLI
 
-`bird` is a fast X CLI for tweeting, replying, and reading via X/Twitter GraphQL (cookie auth).
+`bird`, X/Twitter GraphQL (çerez kimlik doğrulaması) üzerinden tweet atma, yanıtlama ve okuma yapabilen hızlı bir X CLI aracıdır.
 
-## Disclaimer
+## Uyarı
 
-This project uses X/Twitter’s **undocumented** web GraphQL API (and cookie auth). X can change endpoints, query IDs,
-and anti-bot behavior at any time — **expect this to break without notice**.
+Bu proje X/Twitter'ın **belgelenmemiş** web GraphQL API'sini (ve çerez kimlik doğrulamasını) kullanmaktadır. X, uç noktaları, sorgu kimliklerini ve bot karşıtı davranışları istedikleri zaman değiştirebilir — **önceden haber vermeden bozulması beklenmelidir**.
 
-**Strong recommendation: Do not use bird to tweet. You will hit blocks very quickly. Use it to read tweets.
-Bots are not welcome on X/Twitter. If you absolutely have to, use browser automation instead, or pay for the Twitter API to create tweets.**
+**Güçlü öneri: bird ile tweet atmayın. Çok hızlı bir şekilde engellerle karşılaşırsınız. Tweet okumak için kullanın.
+Botlar X/Twitter'da hoş karşılanmaz. Kesinlikle yapmanız gerekiyorsa, bunun yerine tarayıcı otomasyonu kullanın veya tweet oluşturmak için Twitter API'sine ödeme yapın.**
 
-## Install
+## Kurulum
 
 ```bash
 npm install -g @steipete/bird
-# or
+# veya
 pnpm add -g @steipete/bird
-# or
+# veya
 bun add -g @steipete/bird
 
-# one-shot (no install)
+# tek seferlik (kurulum olmadan)
 bunx @steipete/bird whoami
 ```
 
-Homebrew (macOS, prebuilt Bun binary):
+Homebrew (macOS, önceden derlenmiş Bun ikili dosyası):
 
 ```bash
 brew install steipete/tap/bird
 ```
 
-## Quickstart
+## Hızlı Başlangıç
 
 ```bash
-# Show the logged-in account
+# Giriş yapılan hesabı göster
 bird whoami
 
-# Discover command help
+# Komut yardımını keşfet
 bird help whoami
 
-# Read a tweet (URL or ID)
+# Bir tweet oku (URL veya ID)
 bird read https://x.com/user/status/1234567890123456789
 bird 1234567890123456789 --json
 
-# Thread + replies
+# Konu + yanıtlar
 bird thread https://x.com/user/status/1234567890123456789
 bird replies 1234567890123456789
 bird replies 1234567890123456789 --max-pages 3 --json
 bird thread 1234567890123456789 --max-pages 3 --json
 
-# Search + mentions
+# Arama + bahsetmeler
 bird search "from:steipete" -n 5
 bird mentions -n 5
 bird mentions --user @steipete -n 5
 
-# User tweets (profile timeline)
+# Kullanıcı tweetleri (profil zaman akışı)
 bird user-tweets @steipete -n 20
 bird user-tweets @steipete -n 50 --json
 
-# Bookmarks
+# Yer imleri
 bird bookmarks -n 5
 bird bookmarks --folder-id 123456789123456789 -n 5 # https://x.com/i/bookmarks/<folder-id>
 bird bookmarks --all --json
@@ -66,69 +65,69 @@ bird bookmarks --include-parent --json
 bird unbookmark 1234567890123456789
 bird unbookmark https://x.com/user/status/1234567890123456789
 
-# Likes
+# Beğeniler
 bird likes -n 5
 
-# News and trending topics (AI-curated from Explore tabs)
+# Haberler ve gündem konuları (Keşfet sekmelerinden AI-küratörlüğünde)
 bird news --ai-only -n 10
 bird news --sports -n 5
 
-# Lists
+# Listeler
 bird list-timeline 1234567890 -n 20
 bird list-timeline https://x.com/i/lists/1234567890 --all --json
 bird list-timeline 1234567890 --max-pages 3 --json
 
-# Following (who you follow)
+# Takip edilenler (kimi takip ediyorsunuz)
 bird following -n 20
-bird following --user 12345678 -n 10  # by user ID
+bird following --user 12345678 -n 10  # kullanıcı ID'siyle
 
-# Followers (who follows you)
+# Takipçiler (sizi kim takip ediyor)
 bird followers -n 20
-bird followers --user 12345678 -n 10  # by user ID
+bird followers --user 12345678 -n 10  # kullanıcı ID'siyle
 
-# Refresh GraphQL query IDs cache (no rebuild)
+# GraphQL sorgu kimlikleri önbelleğini yenile (yeniden derleme olmadan)
 bird query-ids --fresh
 ```
 
-## News & Trending
+## Haberler & Gündem
 
-Fetch AI-curated news and trending topics from X's Explore page tabs:
+X'in Keşfet sayfası sekmelerinden AI-küratörlüğünde haberler ve gündem konularını getir:
 
 ```bash
-# Fetch 10 news items from all tabs (default: For You, News, Sports, Entertainment)
+# Tüm sekmelerden 10 haber öğesi getir (varsayılan: Senin İçin, Haberler, Spor, Eğlence)
 bird news -n 10
 
-# Fetch only AI-curated news (filters out regular trends)
+# Sadece AI-küratörlüğünde haberleri getir (normal gündemleri filtreler)
 bird news --ai-only -n 20
 
-# Fetch from specific tabs
+# Belirli sekmelerden getir
 bird news --news-only --ai-only -n 10
 bird news --sports -n 15
 bird news --entertainment --ai-only -n 5
 
-# Include related tweets for each news item
+# Her haber öğesi için ilgili tweetleri dahil et
 bird news --with-tweets --tweets-per-item 3 -n 10
 
-# Combine multiple tab filters
+# Birden fazla sekme filtresini birleştir
 bird news --sports --entertainment -n 20
 
-# JSON output
+# JSON çıktısı
 bird news --json -n 5
-bird news --json-full --ai-only -n 10  # includes raw API response
+bird news --json-full --ai-only -n 10  # ham API yanıtını içerir
 ```
 
-Tab options (can be combined):
-- `--for-you` — Fetch from For You tab only
-- `--news-only` — Fetch from News tab only
-- `--sports` — Fetch from Sports tab only
-- `--entertainment` — Fetch from Entertainment tab only
-- `--trending-only` — Fetch from Trending tab only
+Sekme seçenekleri (birleştirilebilir):
+- `--for-you` — Sadece Senin İçin sekmesinden getir
+- `--news-only` — Sadece Haberler sekmesinden getir
+- `--sports` — Sadece Spor sekmesinden getir
+- `--entertainment` — Sadece Eğlence sekmesinden getir
+- `--trending-only` — Sadece Gündem sekmesinden getir
 
-By default, the command fetches from For You, News, Sports, and Entertainment tabs (Trending excluded to reduce noise). Headlines are automatically deduplicated across tabs.
+Varsayılan olarak, komut Senin İçin, Haberler, Spor ve Eğlence sekmelerinden getirir (gürültüyü azaltmak için Gündem hariç tutulur). Başlıklar sekmeler arasında otomatik olarak tekilleştirilir.
 
-## Library
+## Kütüphane
 
-`bird` can be used as a library (same GraphQL client as the CLI):
+`bird` bir kütüphane olarak kullanılabilir (CLI ile aynı GraphQL istemcisi):
 
 ```ts
 import { TwitterClient, resolveCredentials } from '@steipete/bird';
@@ -136,13 +135,13 @@ import { TwitterClient, resolveCredentials } from '@steipete/bird';
 const { cookies } = await resolveCredentials({ cookieSource: 'safari' });
 const client = new TwitterClient({ cookies });
 
-// Search for tweets
+// Tweet ara
 const searchResult = await client.search('from:steipete', 50);
 
-// Fetch news and trending topics from all tabs (default: For You, News, Sports, Entertainment)
+// Tüm sekmelerden haber ve gündem konularını getir (varsayılan: Senin İçin, Haberler, Spor, Eğlence)
 const newsResult = await client.getNews(10, { aiOnly: true });
 
-// Fetch from specific tabs with related tweets
+// Belirli sekmelerden ilgili tweetlerle getir
 const sportsNews = await client.getNews(10, {
   aiOnly: true,
   withTweets: true,
@@ -150,7 +149,7 @@ const sportsNews = await client.getNews(10, {
 });
 ```
 
-Account details (About profile):
+Hesap detayları (Hakkında profili):
 
 ```ts
 const aboutResult = await client.getUserAboutAccount('steipete');
@@ -159,101 +158,100 @@ if (aboutResult.success && aboutResult.aboutProfile) {
 }
 ```
 
-Fields:
+Alanlar:
 - `accountBasedIn`
 - `source`
 - `createdCountryAccurate`
 - `locationAccurate`
 - `learnMoreUrl`
 
-## Commands
+## Komutlar
 
-- `bird tweet "<text>"` — post a new tweet.
-- `bird reply <tweet-id-or-url> "<text>"` — reply to a tweet using its ID or URL.
-- `bird help [command]` — show help (or help for a subcommand).
-- `bird query-ids [--fresh] [--json]` — inspect or refresh cached GraphQL query IDs.
-- `bird home [-n count] [--following] [--json] [--json-full]` — fetch your home timeline (For You) or Following feed.
-- `bird read <tweet-id-or-url> [--json]` — fetch tweet content as text or JSON.
-- `bird <tweet-id-or-url> [--json]` — shorthand for `read` when only a URL or ID is provided.
-- `bird replies <tweet-id-or-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — list replies to a tweet.
-- `bird thread <tweet-id-or-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — show the full conversation thread.
-- `bird search "<query>" [-n count] [--all] [--max-pages n] [--cursor string] [--json]` — search for tweets matching a query; `--max-pages` requires `--all` or `--cursor`.
-- `bird mentions [-n count] [--user @handle] [--json]` — find tweets mentioning a user (defaults to the authenticated user).
-- `bird user-tweets <@handle> [-n count] [--cursor string] [--max-pages n] [--delay ms] [--json]` — get tweets from a user's profile timeline.
-- `bird bookmarks [-n count] [--folder-id id] [--all] [--max-pages n] [--cursor string] [--expand-root-only] [--author-chain] [--author-only] [--full-chain-only] [--include-ancestor-branches] [--include-parent] [--thread-meta] [--sort-chronological] [--json]` — list your bookmarked tweets (or a specific bookmark folder); expansion flags control thread context; `--max-pages` requires `--all` or `--cursor`.
-- `bird unbookmark <tweet-id-or-url...>` — remove one or more bookmarks by tweet ID or URL.
-- `bird likes [-n count] [--all] [--max-pages n] [--cursor string] [--json] [--json-full]` — list your liked tweets; `--max-pages` requires `--all` or `--cursor`.
-- `bird news [-n count] [--ai-only] [--with-tweets] [--tweets-per-item n] [--for-you] [--news-only] [--sports] [--entertainment] [--trending-only] [--json]` — fetch news and trending topics from X's Explore tabs.
-- `bird trending` — alias for `news` command.
-- `bird lists [--member-of] [-n count] [--json]` — list your lists (owned or memberships).
-- `bird list-timeline <list-id-or-url> [-n count] [--all] [--max-pages n] [--cursor string] [--json]` — get tweets from a list timeline; `--max-pages` implies `--all`.
-- `bird following [--user <userId>] [-n count] [--cursor string] [--all] [--max-pages n] [--json]` — list users that you (or another user) follow; `--max-pages` requires `--all`.
-- `bird followers [--user <userId>] [-n count] [--cursor string] [--all] [--max-pages n] [--json]` — list users that follow you (or another user); `--max-pages` requires `--all`.
-- `bird about <@handle> [--json]` — get account origin and location information for a user.
-- `bird whoami` — print which Twitter account your cookies belong to.
-- `bird check` — show which credentials are available and where they were sourced from.
+- `bird tweet "<metin>"` — yeni bir tweet gönder.
+- `bird reply <tweet-id-veya-url> "<metin>"` — ID veya URL kullanarak bir tweete yanıt ver.
+- `bird help [komut]` — yardım göster (veya bir alt komut için yardım).
+- `bird query-ids [--fresh] [--json]` — önbelleğe alınmış GraphQL sorgu kimliklerini incele veya yenile.
+- `bird home [-n sayı] [--following] [--json] [--json-full]` — ana zaman akışınızı (Senin İçin) veya Takip Edilen akışını getir.
+- `bird read <tweet-id-veya-url> [--json]` — tweet içeriğini metin veya JSON olarak getir.
+- `bird <tweet-id-veya-url> [--json]` — sadece bir URL veya ID sağlandığında `read` için kısayol.
+- `bird replies <tweet-id-veya-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — bir tweete verilen yanıtları listele.
+- `bird thread <tweet-id-veya-url> [--all] [--max-pages n] [--cursor string] [--delay ms] [--json]` — tam konuşma konusunu göster.
+- `bird search "<sorgu>" [-n sayı] [--all] [--max-pages n] [--cursor string] [--json]` — bir sorguyla eşleşen tweetleri ara; `--max-pages` için `--all` veya `--cursor` gerekir.
+- `bird mentions [-n sayı] [--user @kullanıcı] [--json]` — bir kullanıcıdan bahseden tweetleri bul (varsayılan olarak kimliği doğrulanmış kullanıcı).
+- `bird user-tweets <@kullanıcı> [-n sayı] [--cursor string] [--max-pages n] [--delay ms] [--json]` — bir kullanıcının profil zaman akışından tweetleri getir.
+- `bird bookmarks [-n sayı] [--folder-id id] [--all] [--max-pages n] [--cursor string] [--expand-root-only] [--author-chain] [--author-only] [--full-chain-only] [--include-ancestor-branches] [--include-parent] [--thread-meta] [--sort-chronological] [--json]` — yer imlerinizi listele (veya belirli bir yer imi klasörü); genişletme bayrakları konu bağlamını kontrol eder; `--max-pages` için `--all` veya `--cursor` gerekir.
+- `bird unbookmark <tweet-id-veya-url...>` — tweet ID veya URL ile bir veya daha fazla yer imini kaldır.
+- `bird likes [-n sayı] [--all] [--max-pages n] [--cursor string] [--json] [--json-full]` — beğenilen tweetlerinizi listele; `--max-pages` için `--all` veya `--cursor` gerekir.
+- `bird news [-n sayı] [--ai-only] [--with-tweets] [--tweets-per-item n] [--for-you] [--news-only] [--sports] [--entertainment] [--trending-only] [--json]` — X'in Keşfet sekmelerinden haber ve gündem konularını getir.
+- `bird trending` — `news` komutu için takma ad.
+- `bird lists [--member-of] [-n sayı] [--json]` — listelerinizi listele (sahip olunan veya üyelikler).
+- `bird list-timeline <liste-id-veya-url> [-n sayı] [--all] [--max-pages n] [--cursor string] [--json]` — bir liste zaman akışından tweetleri getir; `--max-pages`, `--all` gerektirir.
+- `bird following [--user <kullanıcıId>] [-n sayı] [--cursor string] [--all] [--max-pages n] [--json]` — sizin (veya başka bir kullanıcının) takip ettiği kullanıcıları listele; `--max-pages` için `--all` gerekir.
+- `bird followers [--user <kullanıcıId>] [-n sayı] [--cursor string] [--all] [--max-pages n] [--json]` — sizi (veya başka bir kullanıcıyı) takip eden kullanıcıları listele; `--max-pages` için `--all` gerekir.
+- `bird about <@kullanıcı> [--json]` — bir kullanıcı için hesap kaynağı ve konum bilgisi al.
+- `bird whoami` — çerezlerinizin hangi Twitter hesabına ait olduğunu yazdır.
+- `bird check` — hangi kimlik bilgilerinin mevcut olduğunu ve nereden kaynaklandığını göster.
 
-Bookmarks flags:
-- `--expand-root-only`: expand threads only when the bookmark is a root tweet.
-- `--author-chain`: keep only the bookmarked author's connected self-reply chain.
-- `--author-only`: include all tweets from the bookmarked author within the thread.
-- `--full-chain-only`: keep the entire reply chain connected to the bookmarked tweet (all authors).
-- `--include-ancestor-branches`: include sibling branches for ancestors when using `--full-chain-only`.
-- `--include-parent`: include the direct parent tweet for non-root bookmarks.
-- `--thread-meta`: add thread metadata fields to each tweet.
-- `--sort-chronological`: sort output globally oldest to newest (default preserves bookmark order).
+Yer imleri bayrakları:
+- `--expand-root-only`: konuları sadece yer imi bir kök tweet olduğunda genişlet.
+- `--author-chain`: sadece yer imi sahibi yazarın bağlı kendi kendine yanıt zincirini tut.
+- `--author-only`: konu içindeki yer imi sahibi yazarın tüm tweetlerini dahil et.
+- `--full-chain-only`: yer imli tweete bağlı tüm yanıt zincirini tut (tüm yazarlar).
+- `--include-ancestor-branches`: `--full-chain-only` kullanırken atalar için kardeş dalları dahil et.
+- `--include-parent`: kök olmayan yer imleri için doğrudan üst tweeti dahil et.
+- `--thread-meta`: her tweete konu meta veri alanları ekle.
+- `--sort-chronological`: çıktıyı genel olarak en eskiden en yeniye sırala (varsayılan yer imi sırasını korur).
 
-Global options:
-- `--auth-token <token>`: set the `auth_token` cookie manually.
-- `--ct0 <token>`: set the `ct0` cookie manually.
-- `--cookie-source <safari|chrome|firefox>`: choose browser cookie source (repeatable; order matters).
-- `--chrome-profile <name>`: Chrome profile name for cookie extraction (e.g., `Default`, `Profile 2`).
-- `--chrome-profile-dir <path>`: Chrome/Chromium profile directory or cookie DB path for cookie extraction.
-- `--firefox-profile <name>`: Firefox profile for cookie extraction.
-- `--cookie-timeout <ms>`: cookie extraction timeout for keychain/OS helpers (milliseconds).
-- `--timeout <ms>`: abort requests after the given timeout (milliseconds).
-- `--quote-depth <n>`: max quoted tweet depth in JSON output (default: 1; 0 disables).
-- `--plain`: stable output (no emoji, no color).
-- `--no-emoji`: disable emoji output.
-- `--no-color`: disable ANSI colors (or set `NO_COLOR=1`).
-- `--media <path>`: attach media file (repeatable, up to 4 images or 1 video).
-- `--alt <text>`: alt text for the corresponding `--media` (repeatable).
+Genel seçenekler:
+- `--auth-token <token>`: `auth_token` çerezini manuel olarak ayarla.
+- `--ct0 <token>`: `ct0` çerezini manuel olarak ayarla.
+- `--cookie-source <safari|chrome|firefox>`: tarayıcı çerez kaynağını seç (tekrarlanabilir; sıra önemli).
+- `--chrome-profile <ad>`: çerez çıkarma için Chrome profil adı (örn. `Default`, `Profile 2`).
+- `--chrome-profile-dir <yol>`: çerez çıkarma için Chrome/Chromium profil dizini veya çerez DB yolu.
+- `--firefox-profile <ad>`: çerez çıkarma için Firefox profili.
+- `--cookie-timeout <ms>`: keychain/OS yardımcıları için çerez çıkarma zaman aşımı (milisaniye).
+- `--timeout <ms>`: verilen zaman aşımından sonra istekleri iptal et (milisaniye).
+- `--quote-depth <n>`: JSON çıktısında maksimum alıntı tweet derinliği (varsayılan: 1; 0 devre dışı bırakır).
+- `--plain`: kararlı çıktı (emoji yok, renk yok).
+- `--no-emoji`: emoji çıktısını devre dışı bırak.
+- `--no-color`: ANSI renklerini devre dışı bırak (veya `NO_COLOR=1` ayarlayın).
+- `--media <yol>`: medya dosyası ekle (tekrarlanabilir, 4 resme veya 1 videoya kadar).
+- `--alt <metin>`: karşılık gelen `--media` için alternatif metin (tekrarlanabilir).
 
-## Authentication (GraphQL)
+## Kimlik Doğrulama (GraphQL)
 
-GraphQL mode uses your existing X/Twitter web session (no password prompt). It sends requests to internal
-X endpoints and authenticates via cookies (`auth_token`, `ct0`).
+GraphQL modu mevcut X/Twitter web oturumunuzu kullanır (şifre istemi yok). Dahili X uç noktalarına istek gönderir ve çerezler (`auth_token`, `ct0`) aracılığıyla kimlik doğrulaması yapar.
 
-Write operations:
-- `tweet`/`reply` primarily use GraphQL (`CreateTweet`).
-- If GraphQL returns error `226` (“automated request”), `bird` falls back to the legacy `statuses/update.json` endpoint.
+Yazma işlemleri:
+- `tweet`/`reply` öncelikle GraphQL (`CreateTweet`) kullanır.
+- GraphQL hata `226` ("otomatik istek") döndürürse, `bird` eski `statuses/update.json` uç noktasına geri döner.
 
-`bird` resolves credentials in this order:
+`bird` kimlik bilgilerini şu sırayla çözer:
 
-1. CLI flags: `--auth-token`, `--ct0`
-2. Environment variables: `AUTH_TOKEN`, `CT0` (fallback: `TWITTER_AUTH_TOKEN`, `TWITTER_CT0`)
-3. Browser cookies via `@steipete/sweet-cookie` (override via `--cookie-source` order)
+1. CLI bayrakları: `--auth-token`, `--ct0`
+2. Ortam değişkenleri: `AUTH_TOKEN`, `CT0` (yedek: `TWITTER_AUTH_TOKEN`, `TWITTER_CT0`)
+3. `@steipete/sweet-cookie` aracılığıyla tarayıcı çerezleri (`--cookie-source` sırasıyla geçersiz kılınabilir)
 
-Browser cookie sources:
-- Safari: `~/Library/Cookies/Cookies.binarycookies` (fallback: `~/Library/Containers/com.apple.Safari/Data/Library/Cookies/Cookies.binarycookies`)
-- Chrome: `~/Library/Application Support/Google/Chrome/<Profile>/Cookies`
-- Firefox: `~/Library/Application Support/Firefox/Profiles/<profile>/cookies.sqlite`
-  - For Chromium variants (Arc/Brave/etc), pass a profile directory or cookie DB via `--chrome-profile-dir`.
+Tarayıcı çerez kaynakları:
+- Safari: `~/Library/Cookies/Cookies.binarycookies` (yedek: `~/Library/Containers/com.apple.Safari/Data/Library/Cookies/Cookies.binarycookies`)
+- Chrome: `~/Library/Application Support/Google/Chrome/<Profil>/Cookies`
+- Firefox: `~/Library/Application Support/Firefox/Profiles/<profil>/cookies.sqlite`
+  - Chromium varyantları (Arc/Brave/vb.) için `--chrome-profile-dir` ile bir profil dizini veya çerez DB'si iletin.
 
-## Config (JSON5)
+## Yapılandırma (JSON5)
 
-Config precedence: CLI flags > env vars > project config > global config.
+Yapılandırma önceliği: CLI bayrakları > ortam değişkenleri > proje yapılandırması > genel yapılandırma.
 
-- Global: `~/.config/bird/config.json5`
-- Project: `./.birdrc.json5`
+- Genel: `~/.config/bird/config.json5`
+- Proje: `./.birdrc.json5`
 
-Example `~/.config/bird/config.json5`:
+Örnek `~/.config/bird/config.json5`:
 
 ```json5
 {
-  // Cookie source order for browser extraction (string or array)
+  // Tarayıcı çıkarma için çerez kaynak sırası (string veya dizi)
   cookieSource: ["firefox", "safari"],
-  chromeProfileDir: "/path/to/Chromium/Profile",
+  chromeProfileDir: "/yol/Chromium/Profil",
   firefoxProfile: "default-release",
   cookieTimeoutMs: 30000,
   timeoutMs: 20000,
@@ -261,119 +259,118 @@ Example `~/.config/bird/config.json5`:
 }
 ```
 
-Environment shortcuts:
+Ortam kısayolları:
 - `BIRD_TIMEOUT_MS`
 - `BIRD_COOKIE_TIMEOUT_MS`
 - `BIRD_QUOTE_DEPTH`
 
-## Output
+## Çıktı
 
-- `--json` prints raw tweet objects for read/replies/thread/search/mentions/user-tweets/bookmarks/likes.
-- When using `--json` with pagination (`--all`, `--cursor`, `--max-pages`, or for `user-tweets` when `-n > 20`), output is `{ tweets, nextCursor }`.
-- `read` returns full text for Notes and Articles when present.
-- Use `--plain` for stable, script-friendly output (no emoji, no color).
+- `--json` read/replies/thread/search/mentions/user-tweets/bookmarks/likes için ham tweet nesnelerini yazdırır.
+- `--json` ile sayfalandırma kullanırken (`--all`, `--cursor`, `--max-pages`, veya `user-tweets` için `-n > 20`), çıktı `{ tweets, nextCursor }` şeklindedir.
+- `read` Notes ve Articles için mevcut olduğunda tam metni döndürür.
+- Kararlı, betik dostu çıktı için `--plain` kullanın (emoji yok, renk yok).
 
-### JSON Schema
+### JSON Şeması
 
-When using `--json`, tweet objects include:
+`--json` kullanırken tweet nesneleri şunları içerir:
 
-| Field | Type | Description |
-|-------|------|-------------|
+| Alan | Tür | Açıklama |
+|------|-----|----------|
 | `id` | string | Tweet ID |
-| `text` | string | Full tweet text (includes Note/Article content when present) |
+| `text` | string | Tam tweet metni (mevcut olduğunda Note/Article içeriğini içerir) |
 | `author` | object | `{ username, name }` |
-| `authorId` | string? | Author's user ID |
-| `createdAt` | string | Timestamp |
-| `replyCount` | number | Number of replies |
-| `retweetCount` | number | Number of retweets |
-| `likeCount` | number | Number of likes |
-| `conversationId` | string | Thread conversation ID |
-| `inReplyToStatusId` | string? | Parent tweet ID (present if this is a reply) |
-| `quotedTweet` | object? | Embedded quote tweet (same schema; depth controlled by `--quote-depth`) |
+| `authorId` | string? | Yazarın kullanıcı ID'si |
+| `createdAt` | string | Zaman damgası |
+| `replyCount` | number | Yanıt sayısı |
+| `retweetCount` | number | Retweet sayısı |
+| `likeCount` | number | Beğeni sayısı |
+| `conversationId` | string | Konu konuşma ID'si |
+| `inReplyToStatusId` | string? | Üst tweet ID (bu bir yanıtsa mevcuttur) |
+| `quotedTweet` | object? | Gömülü alıntı tweet (aynı şema; derinlik `--quote-depth` ile kontrol edilir) |
 
-When using `--json` with `following`/`followers`, user objects include:
+`--json` ile `following`/`followers` kullanırken kullanıcı nesneleri şunları içerir:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | User ID |
-| `username` | string | Username/handle |
-| `name` | string | Display name |
-| `description` | string? | User bio |
-| `followersCount` | number? | Followers count |
-| `followingCount` | number? | Following count |
-| `isBlueVerified` | boolean? | Blue verified flag |
- | `profileImageUrl` | string? | Profile image URL |
- | `createdAt` | string? | Account creation timestamp |
+| Alan | Tür | Açıklama |
+|------|-----|----------|
+| `id` | string | Kullanıcı ID |
+| `username` | string | Kullanıcı adı/handle |
+| `name` | string | Görünen ad |
+| `description` | string? | Kullanıcı biyografisi |
+| `followersCount` | number? | Takipçi sayısı |
+| `followingCount` | number? | Takip edilen sayısı |
+| `isBlueVerified` | boolean? | Mavi doğrulanmış bayrağı |
+| `profileImageUrl` | string? | Profil resmi URL'si |
+| `createdAt` | string? | Hesap oluşturma zaman damgası |
 
-When using `--json` with `news`/`trending`, news objects include:
+`--json` ile `news`/`trending` kullanırken haber nesneleri şunları içerir:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Unique identifier for the news item |
-| `headline` | string | News headline or trend title |
-| `category` | string? | Category (e.g., "AI · Technology", "Trending", "News") |
-| `timeAgo` | string? | Relative time (e.g., "2h ago") |
-| `postCount` | number? | Number of posts |
-| `description` | string? | Item description |
-| `url` | string? | URL to the trend or news article |
-| `tweets` | array? | Related tweets (only when `--with-tweets` is used) |
-| `_raw` | object? | Raw API response (only when `--json-full` is used) |
+| Alan | Tür | Açıklama |
+|------|-----|----------|
+| `id` | string | Haber öğesi için benzersiz tanımlayıcı |
+| `headline` | string | Haber başlığı veya gündem başlığı |
+| `category` | string? | Kategori (örn. "AI · Teknoloji", "Gündem", "Haberler") |
+| `timeAgo` | string? | Göreceli zaman (örn. "2 saat önce") |
+| `postCount` | number? | Gönderi sayısı |
+| `description` | string? | Öğe açıklaması |
+| `url` | string? | Gündem veya haber makalesinin URL'si |
+| `tweets` | array? | İlgili tweetler (sadece `--with-tweets` kullanıldığında) |
+| `_raw` | object? | Ham API yanıtı (sadece `--json-full` kullanıldığında) |
 
 
-## Query IDs (GraphQL)
+## Sorgu Kimlikleri (GraphQL)
 
-X rotates GraphQL “query IDs” frequently. Each GraphQL operation is addressed as:
+X, GraphQL "sorgu kimliklerini" sık sık değiştirir. Her GraphQL işlemi şu şekilde adreslenir:
 
-- `operationName` (e.g. `TweetDetail`, `CreateTweet`)
-- `queryId` (rotating ID baked into X’s web client bundles)
+- `operationName` (örn. `TweetDetail`, `CreateTweet`)
+- `queryId` (X'in web istemci paketlerinde bulunan değişen ID)
 
-`bird` ships with a baseline mapping in `src/lib/query-ids.json` (copied into `dist/` on build). At runtime,
-it can refresh that mapping by scraping X’s public web client bundles and caching the result on disk.
+`bird`, `src/lib/query-ids.json`'da bir temel eşleme ile gelir (derleme sırasında `dist/`'e kopyalanır). Çalışma zamanında,
+X'in halka açık web istemci paketlerini kazıyarak bu eşlemeyi yenileyebilir ve sonucu diskte önbelleğe alabilir.
 
-Runtime cache:
-- Default path: `~/.config/bird/query-ids-cache.json`
-- Override path: `BIRD_QUERY_IDS_CACHE=/path/to/file.json`
-- TTL: 24h (stale cache is still used, but marked “not fresh”)
+Çalışma zamanı önbelleği:
+- Varsayılan yol: `~/.config/bird/query-ids-cache.json`
+- Yolu geçersiz kıl: `BIRD_QUERY_IDS_CACHE=/yol/dosya.json`
+- TTL: 24 saat (eski önbellek hala kullanılır, ancak "taze değil" olarak işaretlenir)
 
-Auto-recovery:
-- On GraphQL `404` (query ID invalid), `bird` forces a refresh once and retries.
-- For `TweetDetail`/`SearchTimeline`, `bird` also rotates through a small set of known fallback IDs to reduce
-  breakage while refreshing.
+Otomatik kurtarma:
+- GraphQL `404` (sorgu ID geçersiz) durumunda, `bird` bir kez yenilemeye zorlar ve yeniden dener.
+- `TweetDetail`/`SearchTimeline` için, `bird` yenileme sırasında bozulmayı azaltmak için bilinen küçük bir yedek ID seti arasında da döner.
 
-Refresh on demand:
+İsteğe bağlı yenileme:
 
 ```bash
 bird query-ids --fresh
 ```
 
-Exit codes:
-- `0`: success
-- `1`: runtime error (network/auth/etc)
-- `2`: invalid usage/validation (e.g. bad `--user` handle)
+Çıkış kodları:
+- `0`: başarı
+- `1`: çalışma zamanı hatası (ağ/kimlik doğrulama/vb.)
+- `2`: geçersiz kullanım/doğrulama (örn. hatalı `--user` handle'ı)
 
-## Version
+## Sürüm
 
-`bird --version` prints `package.json` version plus current git sha when available, e.g. `0.3.0 (3df7969b)`.
+`bird --version`, mevcut olduğunda `package.json` sürümü artı mevcut git sha'yı yazdırır, örn. `0.3.0 (3df7969b)`.
 
-## Media uploads
+## Medya Yüklemeleri
 
-- Attach media with `--media` (repeatable) and optional `--alt` per item.
-- Up to 4 images/GIFs, or 1 video (no mixing). Supported: jpg, jpeg, png, webp, gif, mp4, mov.
-- Images/GIFs + 1 video supported (uploads via Twitter legacy upload endpoint + cookies; video may take longer to process).
+- `--media` (tekrarlanabilir) ve her öğe için isteğe bağlı `--alt` ile medya ekleyin.
+- 4 resim/GIF'e kadar veya 1 video (karıştırma yok). Desteklenen: jpg, jpeg, png, webp, gif, mp4, mov.
+- Resimler/GIF'ler + 1 video desteklenir (Twitter eski yükleme uç noktası + çerezler aracılığıyla yükler; videonun işlenmesi daha uzun sürebilir).
 
-Example:
+Örnek:
 
 ```bash
-bird tweet "hi" --media img.png --alt "desc"
+bird tweet "merhaba" --media resim.png --alt "açıklama"
 ```
 
-## Development
+## Geliştirme
 
 ```bash
 cd ~/Projects/bird
 pnpm install
-pnpm run build       # dist/ + bun binary
-pnpm run build:dist  # dist/ only
+pnpm run build       # dist/ + bun ikili dosyası
+pnpm run build:dist  # sadece dist/
 pnpm run build:binary
 
 pnpm run dev tweet "Test"
@@ -382,7 +379,7 @@ pnpm test
 pnpm run lint
 ```
 
-## Notes
+## Notlar
 
-- GraphQL uses internal X endpoints and can be rate limited (429).
-- Query IDs rotate; refresh at runtime with `bird query-ids --fresh` (or update the baked baseline via `pnpm run graphql:update`).
+- GraphQL dahili X uç noktalarını kullanır ve hız sınırlamasına tabi olabilir (429).
+- Sorgu kimlikleri değişir; çalışma zamanında `bird query-ids --fresh` ile yenileyin (veya yerleşik temeli `pnpm run graphql:update` ile güncelleyin).

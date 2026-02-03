@@ -46,7 +46,7 @@ export function registerSearchCommands(program: Command, ctx: CliContext): void 
         }
 
         if (!cookies.authToken || !cookies.ct0) {
-          console.error(`${ctx.p('err')}Missing required credentials`);
+          console.error(`${ctx.p('err')}Gerekli kimlik bilgileri eksik`);
           process.exit(1);
         }
 
@@ -73,10 +73,10 @@ export function registerSearchCommands(program: Command, ctx: CliContext): void 
           ctx.printTweetsResult(result, {
             json: isJson,
             usePagination: Boolean(usePagination),
-            emptyMessage: 'No tweets found.',
+            emptyMessage: 'Hiç tweet bulunamadı.',
           });
         } else {
-          console.error(`${ctx.p('err')}Search failed: ${result.error}`);
+          console.error(`${ctx.p('err')}Arama başarısız: ${result.error}`);
           process.exit(1);
         }
       },
@@ -122,9 +122,7 @@ export function registerSearchCommands(program: Command, ctx: CliContext): void 
         if (handle) {
           query = `@${handle}`;
         } else {
-          console.error(
-            `${ctx.p('err')}Could not determine current user (${who.error ?? 'Unknown error'}). Use --user <handle>.`,
-          );
+          console.error(`${ctx.p('err')}Kullanıcı adı belirlenemedi. Lütfen belirtin.`);
           process.exit(1);
         }
       }
@@ -138,7 +136,7 @@ export function registerSearchCommands(program: Command, ctx: CliContext): void 
           emptyMessage: 'No mentions found.',
         });
       } else {
-        console.error(`${ctx.p('err')}Failed to fetch mentions: ${result.error}`);
+        console.error(`${ctx.p('err')}Bahsetmeler getirilemedi: ${result.error}`);
         process.exit(1);
       }
     });

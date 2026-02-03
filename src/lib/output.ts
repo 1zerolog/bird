@@ -9,22 +9,22 @@ export type StatusKind = 'ok' | 'warn' | 'err' | 'info' | 'hint';
 export type LabelKind = 'url' | 'date' | 'source' | 'engine' | 'credentials' | 'user' | 'userId' | 'email';
 
 const STATUS: Record<StatusKind, { emoji: string; text: string; plain: string }> = {
-  ok: { emoji: '✅', text: 'OK:', plain: '[ok]' },
-  warn: { emoji: '⚠️', text: 'Warning:', plain: '[warn]' },
-  err: { emoji: '❌', text: 'Error:', plain: '[err]' },
-  info: { emoji: 'ℹ️', text: 'Info:', plain: '[info]' },
-  hint: { emoji: 'ℹ️', text: 'Hint:', plain: '[hint]' },
+  ok: { emoji: '✅', text: 'Tamam:', plain: '[tamam]' },
+  warn: { emoji: '⚠️', text: 'Uyarı:', plain: '[uyarı]' },
+  err: { emoji: '❌', text: 'Hata:', plain: '[hata]' },
+  info: { emoji: 'ℹ️', text: 'Bilgi:', plain: '[bilgi]' },
+  hint: { emoji: 'ℹ️', text: 'İpucu:', plain: '[ipucu]' },
 };
 
 const LABELS: Record<LabelKind, { emoji: string; text: string; plain: string }> = {
-  url: { emoji: '🔗', text: 'URL:', plain: 'url:' },
-  date: { emoji: '📅', text: 'Date:', plain: 'date:' },
-  source: { emoji: '📍', text: 'Source:', plain: 'source:' },
-  engine: { emoji: '⚙️', text: 'Engine:', plain: 'engine:' },
-  credentials: { emoji: '🔑', text: 'Credentials:', plain: 'credentials:' },
-  user: { emoji: '🙋', text: 'User:', plain: 'user:' },
-  userId: { emoji: '🪪', text: 'User ID:', plain: 'user_id:' },
-  email: { emoji: '📧', text: 'Email:', plain: 'email:' },
+  url: { emoji: '🔗', text: 'Bağlantı:', plain: 'bağlantı:' },
+  date: { emoji: '📅', text: 'Tarih:', plain: 'tarih:' },
+  source: { emoji: '📍', text: 'Kaynak:', plain: 'kaynak:' },
+  engine: { emoji: '⚙️', text: 'Motor:', plain: 'motor:' },
+  credentials: { emoji: '🔑', text: 'Kimlik:', plain: 'kimlik:' },
+  user: { emoji: '🙋', text: 'Kullanıcı:', plain: 'kullanıcı:' },
+  userId: { emoji: '🪪', text: 'Kullanıcı ID:', plain: 'kullanıcı_id:' },
+  email: { emoji: '📧', text: 'E-posta:', plain: 'e-posta:' },
 };
 
 export function resolveOutputConfigFromArgv(argv: string[], env: NodeJS.ProcessEnv, isTty: boolean): OutputConfig {
@@ -84,10 +84,10 @@ export function formatStatsLine(
   const replyCount = stats.replyCount ?? 0;
 
   if (cfg.plain) {
-    return `likes: ${likeCount}  retweets: ${retweetCount}  replies: ${replyCount}`;
+    return `beğeni: ${likeCount}  retweet: ${retweetCount}  yanıt: ${replyCount}`;
   }
   if (!cfg.emoji) {
-    return `Likes ${likeCount}  Retweets ${retweetCount}  Replies ${replyCount}`;
+    return `Beğeni ${likeCount}  Retweet ${retweetCount}  Yanıt ${replyCount}`;
   }
   return `❤️ ${likeCount}  🔁 ${retweetCount}  💬 ${replyCount}`;
 }

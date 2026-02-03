@@ -5,11 +5,11 @@ import { TwitterClient } from '../lib/twitter-client.js';
 export function registerHomeCommand(program: Command, ctx: CliContext): void {
   program
     .command('home')
-    .description('Get your home timeline ("For You" feed)')
-    .option('-n, --count <number>', 'Number of tweets to fetch', '20')
-    .option('--following', 'Get "Following" feed (chronological) instead of "For You"')
-    .option('--json', 'Output as JSON')
-    .option('--json-full', 'Output as JSON with full raw API response in _raw field')
+    .description('Ana zaman akışını getir')
+    .option('-n, --count <sayı>', 'Getirilecek tweet sayısı', '20')
+    .option('--following', 'Takip ettiklerinin akışını (kronolojik) getir, "For You" yerine')
+    .option('--json', 'JSON olarak çıktı ver')
+    .option('--json-full', 'Ham API yanıtı ile birlikte JSON olarak çıktı ver (_raw alanında)')
     .action(async (cmdOpts: { count?: string; following?: boolean; json?: boolean; jsonFull?: boolean }) => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
@@ -22,12 +22,12 @@ export function registerHomeCommand(program: Command, ctx: CliContext): void {
       }
 
       if (!cookies.authToken || !cookies.ct0) {
-        console.error(`${ctx.p('err')}Missing required credentials`);
+        console.error(`${ctx.p('err')}Gerekli kimlik bilgileri eksik`);
         process.exit(1);
       }
 
       if (!Number.isFinite(count) || count <= 0) {
-        console.error(`${ctx.p('err')}Invalid --count. Expected a positive integer.`);
+        console.error(`${ctx.p('err')}Geçersiz --count. Pozitif bir tam sayı bekleniyor.`);
         process.exit(1);
       }
 
@@ -39,12 +39,12 @@ export function registerHomeCommand(program: Command, ctx: CliContext): void {
         : await client.getHomeTimeline(count, { includeRaw });
 
       if (result.success) {
-        const feedType = cmdOpts.following ? 'Following' : 'For You';
-        const emptyMessage = `No tweets found in ${feedType} timeline.`;
+        const feedType = cmdOpts.following ? 'Takip Edilenler' : 'Sana Özel';
+        const emptyMessage = `Ana akışta tweet bulunamadı.`;
         const isJson = Boolean(cmdOpts.json || cmdOpts.jsonFull);
         ctx.printTweets(result.tweets, { json: isJson, emptyMessage });
       } else {
-        console.error(`${ctx.p('err')}Failed to fetch home timeline: ${result.error}`);
+        console.error(`${ctx.p('err')}Zaman akışı getirilemedi: ${result.error}`);
         process.exit(1);
       }
     });

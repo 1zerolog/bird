@@ -11,7 +11,7 @@ import { TwitterClient } from '../lib/twitter-client.js';
 
 function printLists(lists: TwitterList[], ctx: CliContext): void {
   if (lists.length === 0) {
-    console.log('No lists found.');
+    console.log('Liste bulunamadı.');
     return;
   }
 
@@ -34,10 +34,10 @@ function printLists(lists: TwitterList[], ctx: CliContext): void {
 export function registerListsCommand(program: Command, ctx: CliContext): void {
   program
     .command('lists')
-    .description('Get your Twitter lists')
-    .option('--member-of', 'Show lists you are a member of (instead of owned lists)')
-    .option('-n, --count <number>', 'Number of lists to fetch', '100')
-    .option('--json', 'Output as JSON')
+    .description('Abone olduğunuz Twitter listelerini getir')
+    .option('--member-of', 'Abone olduğunuz listeleri göster (sahip olunan listeler yerine)')
+    .option('-n, --count <number>', 'Getirilecek liste sayısı', '100')
+    .option('--json', 'JSON olarak çıktı ver')
     .action(async (cmdOpts: { memberOf?: boolean; count?: string; json?: boolean }) => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
@@ -62,7 +62,7 @@ export function registerListsCommand(program: Command, ctx: CliContext): void {
         if (cmdOpts.json) {
           console.log(JSON.stringify(result.lists, null, 2));
         } else {
-          const emptyMessage = cmdOpts.memberOf ? 'You are not a member of any lists.' : 'You do not own any lists.';
+          const emptyMessage = cmdOpts.memberOf ? 'Hiçbir listenin üyesi değilsiniz.' : 'Hiçbir listenin sahibi değilsiniz.';
           if (result.lists.length === 0) {
             console.log(emptyMessage);
           } else {
@@ -70,20 +70,21 @@ export function registerListsCommand(program: Command, ctx: CliContext): void {
           }
         }
       } else {
-        console.error(`${ctx.p('err')}Failed to fetch lists: ${result.error}`);
+        console.error(`${ctx.p('err')}Listeler getirilemedi: ${result.error}`);
         process.exit(1);
       }
     });
 
   program
-    .command('list-timeline <list-id-or-url>')
-    .description('Get tweets from a list timeline')
-    .option('-n, --count <number>', 'Number of tweets to fetch', '20')
-    .option('--all', 'Fetch all tweets from list (paged). WARNING: your account might get banned using this flag')
-    .option('--max-pages <number>', 'Fetch N pages (implies --all)')
-    .option('--cursor <string>', 'Resume pagination from a cursor')
-    .option('--json', 'Output as JSON')
-    .option('--json-full', 'Output as JSON with full raw API response in _raw field')
+    .command('list-timeline')
+    .description('Belirli bir liste için tweet zaman akışını getir')
+    .argument('<list-id-or-url>', 'Liste kimliği veya URL')
+    .option('-n, --count <number>', 'Getirilecek tweet sayısı', '20')
+    .option('--all', 'Listeden tüm tweetleri getir (sayfalı). UYARI: Bu bayrağı kullanmak hesabınızın yasaklanmasına neden olabilir')
+    .option('--max-pages <number>', 'N sayfa getir (--all anlamına gelir)')
+    .option('--cursor <string>', 'Sayfalandırmayı bir imleçten devam ettir')
+    .option('--json', 'JSON olarak çıktı ver')
+    .option('--json-full', 'Ham API yanıtı ile birlikte JSON olarak çıktı ver')
     .action(
       async (
         listIdOrUrl: string,
@@ -147,7 +148,7 @@ export function registerListsCommand(program: Command, ctx: CliContext): void {
             emptyMessage: 'No tweets found in this list.',
           });
         } else {
-          console.error(`${ctx.p('err')}Failed to fetch list timeline: ${result.error}`);
+          console.error(`${ctx.p('err')}Liste zaman akışı getirilemedi: ${result.error}`);
           process.exit(1);
         }
       },

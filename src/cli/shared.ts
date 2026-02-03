@@ -73,7 +73,7 @@ function parseCookieSource(value: string): CookieSource {
   if (normalized === 'safari' || normalized === 'chrome' || normalized === 'firefox') {
     return normalized;
   }
-  throw new Error(`Invalid --cookie-source "${value}". Allowed: safari, chrome, firefox.`);
+  throw new Error(`Geçersiz --cookie-source "${value}". İzin verilen: safari, chrome, firefox.`);
 }
 
 export const collectCookieSource = (value: string, previous: CookieSource[] = []): CookieSource[] => {
@@ -156,7 +156,7 @@ function readConfigFile(path: string, warn: (message: string) => void): Partial<
     const parsed = JSON5.parse(raw) as Partial<BirdConfig>;
     return parsed ?? {};
   } catch (error) {
-    warn(`Failed to parse config at ${path}: ${error instanceof Error ? error.message : String(error)}`);
+    warn(`Yapılandırma dosyası ayrıştırılamadı: ${path}: ${error instanceof Error ? error.message : String(error)}`);
     return {};
   }
 }
@@ -188,8 +188,8 @@ export function createCliContext(normalizedArgs: string[], env: NodeJS.ProcessEn
 
   const wrap =
     (styler: (text: string) => string): ((text: string) => string) =>
-    (text: string): string =>
-      isTty ? styler(text) : text;
+      (text: string): string =>
+        isTty ? styler(text) : text;
 
   const colors = {
     banner: wrap((t) => kleur.bold().blue(t)),
@@ -302,7 +302,7 @@ export function createCliContext(normalizedArgs: string[], env: NodeJS.ProcessEn
     for (const [index, path] of opts.media.entries()) {
       const mime = detectMime(path);
       if (!mime) {
-        throw new Error(`Unsupported media type for ${path}. Supported: jpg, jpeg, png, webp, gif, mp4, mov`);
+        throw new Error(`Desteklenmeyen medya türü: ${path}. Desteklenen: jpg, jpeg, png, webp, gif, mp4, mov`);
       }
       const buffer = readFileSync(path);
       specs.push({ path, mime, buffer, alt: opts.alts[index] });
@@ -310,13 +310,13 @@ export function createCliContext(normalizedArgs: string[], env: NodeJS.ProcessEn
 
     const videoCount = specs.filter((m) => m.mime.startsWith('video/')).length;
     if (videoCount > 1) {
-      throw new Error('Only one video can be attached');
+      throw new Error('Sadece bir video eklenebilir');
     }
     if (videoCount === 1 && specs.length > 1) {
-      throw new Error('Video cannot be combined with other media');
+      throw new Error('Video diğer medyalarla birleştirilemez');
     }
     if (specs.length > 4) {
-      throw new Error('Maximum 4 media attachments');
+      throw new Error('En fazla 4 medya eklenebilir');
     }
     return specs;
   }
@@ -330,16 +330,16 @@ export function createCliContext(normalizedArgs: string[], env: NodeJS.ProcessEn
       return;
     }
     if (tweets.length === 0) {
-      console.log(opts.emptyMessage ?? 'No tweets found.');
+      console.log(opts.emptyMessage ?? 'Tweet bulunamadı.');
       return;
     }
     const useEmoji = output.emoji && !output.plain;
-    const articleLabel = useEmoji ? '📰' : 'Article:';
+    const articleLabel = useEmoji ? '📰' : 'Makale:';
     const mediaLabel = (type: 'photo' | 'video' | 'animated_gif'): string => {
       if (useEmoji) {
         return type === 'video' ? '🎬' : type === 'animated_gif' ? '🔄' : '🖼️';
       }
-      return type === 'video' ? 'VIDEO:' : type === 'animated_gif' ? 'GIF:' : 'PHOTO:';
+      return type === 'video' ? 'VİDEO:' : type === 'animated_gif' ? 'GIF:' : 'FOTOĞRAF:';
     };
     const quotePrefix = useEmoji ? { top: '┌─', mid: '│ ', bot: '└─' } : { top: '> ', mid: '> ', bot: '> ' };
 

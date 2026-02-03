@@ -7,10 +7,10 @@ import { TwitterClient } from '../lib/twitter-client.js';
 export function registerReadCommands(program: Command, ctx: CliContext): void {
   program
     .command('read')
-    .description('Read/fetch a tweet by ID or URL')
-    .argument('<tweet-id-or-url>', 'Tweet ID or URL to read')
-    .option('--json', 'Output as JSON')
-    .option('--json-full', 'Output as JSON with full raw API response in _raw field')
+    .description('Bir tweeti oku')
+    .argument('<tweet-id-veya-url>', 'Tweet ID veya URL')
+    .option('--json', 'JSON olarak çıktı ver')
+    .option('--json-full', 'Ham API yanıtı ile birlikte JSON olarak çıktı ver')
     .action(async (tweetIdOrUrl: string, cmdOpts: { json?: boolean; jsonFull?: boolean }) => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
@@ -41,7 +41,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
           console.log(formatStatsLine(result.tweet, ctx.getOutput()));
         }
       } else {
-        console.error(`${ctx.p('err')}Failed to read tweet: ${result.error}`);
+        console.error(`${ctx.p('err')}Tweet okunamadı: ${res.error}`);
         process.exit(1);
       }
     });
@@ -95,11 +95,11 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
 
         const result = pagination.usePagination
           ? await client.getRepliesPaged(tweetId, {
-              includeRaw,
-              maxPages: pagination.maxPages,
-              cursor: pagination.cursor,
-              pageDelayMs: pagination.pageDelayMs,
-            })
+            includeRaw,
+            maxPages: pagination.maxPages,
+            cursor: pagination.cursor,
+            pageDelayMs: pagination.pageDelayMs,
+          })
           : await client.getReplies(tweetId, { includeRaw });
 
         const isJson = Boolean(cmdOpts.json || cmdOpts.jsonFull);
@@ -117,7 +117,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
         }
 
         if (!result.success) {
-          console.error(`${ctx.p('err')}Failed to fetch replies: ${result.error}`);
+          console.error(`${ctx.p('err')}Yanıtlar getirilemedi: ${res.error}`);
           process.exit(1);
         }
       },
@@ -172,11 +172,11 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
 
         const result = pagination.usePagination
           ? await client.getThreadPaged(tweetId, {
-              includeRaw,
-              maxPages: pagination.maxPages,
-              cursor: pagination.cursor,
-              pageDelayMs: pagination.pageDelayMs,
-            })
+            includeRaw,
+            maxPages: pagination.maxPages,
+            cursor: pagination.cursor,
+            pageDelayMs: pagination.pageDelayMs,
+          })
           : await client.getThread(tweetId, { includeRaw });
 
         const isJson = Boolean(cmdOpts.json || cmdOpts.jsonFull);
@@ -196,7 +196,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
         }
 
         if (!result.success) {
-          console.error(`${ctx.p('err')}Failed to fetch thread: ${result.error}`);
+          console.error(`${ctx.p('err')}Thread getirilemedi: ${res.error}`);
           process.exit(1);
         }
       },

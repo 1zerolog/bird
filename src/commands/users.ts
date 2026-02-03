@@ -5,21 +5,21 @@ import { TwitterClient } from '../lib/twitter-client.js';
 import type { AboutAccountProfile, TwitterUser } from '../lib/twitter-client-types.js';
 
 function formatAboutProfile(profile: AboutAccountProfile, ctx: CliContext, handle: string): string[] {
-  const lines: string[] = [`${ctx.p('info')}Account information for @${handle}:`];
+  const lines: string[] = [`${ctx.p('info')}@${handle} için hesap bilgisi:`];
   if (profile.accountBasedIn) {
-    lines.push(`  Account based in: ${profile.accountBasedIn}`);
+    lines.push(`  Hesap konumu: ${profile.accountBasedIn}`);
   }
   if (profile.createdCountryAccurate !== undefined) {
-    lines.push(`  Creation country accurate: ${profile.createdCountryAccurate ? 'Yes' : 'No'}`);
+    lines.push(`  Oluşturma ülkesi doğru: ${profile.createdCountryAccurate ? 'Evet' : 'Hayır'}`);
   }
   if (profile.locationAccurate !== undefined) {
-    lines.push(`  Location accurate: ${profile.locationAccurate ? 'Yes' : 'No'}`);
+    lines.push(`  Konum doğru: ${profile.locationAccurate ? 'Evet' : 'Hayır'}`);
   }
   if (profile.source) {
     lines.push(`${ctx.l('source')}${profile.source}`);
   }
   if (profile.learnMoreUrl) {
-    lines.push(`  Learn more: ${profile.learnMoreUrl}`);
+    lines.push(`  Daha fazla bilgi: ${profile.learnMoreUrl}`);
   }
   return lines;
 }
@@ -58,7 +58,7 @@ function printUsers(users: TwitterUser[], ctx: CliContext): void {
       console.log(`  ${user.description.slice(0, 100)}${user.description.length > 100 ? '...' : ''}`);
     }
     if (user.followersCount !== undefined) {
-      console.log(`  ${ctx.p('info')}${user.followersCount.toLocaleString()} followers`);
+      console.log(`  ${ctx.p('info')}${user.followersCount.toLocaleString()} takipçi`);
     }
     console.log('──────────────────────────────────────────────────');
   }
@@ -75,7 +75,7 @@ async function resolveUserIdOrExit(
 
   const currentUser = await client.getCurrentUser();
   if (!currentUser.success || !currentUser.user?.id) {
-    console.error(`${ctx.p('err')}Failed to get current user: ${currentUser.error || 'Unknown error'}`);
+    console.error(`${ctx.p('err')}Geçerli kullanıcı alınamadı: ${currentUser.error || 'Bilinmeyen hata'}`);
     process.exit(1);
   }
 
@@ -95,11 +95,11 @@ async function runUserListCommand(
 
   const usePagination = cmdOpts.all || cmdOpts.cursor;
   if (maxPages !== undefined && !cmdOpts.all) {
-    console.error(`${ctx.p('err')}--max-pages requires --all.`);
+    console.error(`${ctx.p('err')}--max-pages, --all gerektirir.`);
     process.exit(1);
   }
   if (maxPages !== undefined && (!Number.isFinite(maxPages) || maxPages <= 0)) {
-    console.error(`${ctx.p('err')}Invalid --max-pages. Expected a positive integer.`);
+    console.error(`${ctx.p('err')}Geçersiz --max-pages. Pozitif bir tam sayı bekleniyor.`);
     process.exit(1);
   }
 
@@ -110,7 +110,7 @@ async function runUserListCommand(
   }
 
   if (!cookies.authToken || !cookies.ct0) {
-    console.error(`${ctx.p('err')}Missing required credentials`);
+    console.error(`${ctx.p('err')}Gerekli kimlik bilgileri eksik`);
     process.exit(1);
   }
 
@@ -127,13 +127,13 @@ async function runUserListCommand(
     while (true) {
       pageNum += 1;
       if (!cmdOpts.json) {
-        console.error(`${ctx.p('info')}Fetching page ${pageNum}...`);
+        console.error(`${ctx.p('info')}Sayfa ${pageNum} getiriliyor...`);
       }
 
       const result = await spec.fetch(client, userId, count, cursor);
 
       if (!result.success || !result.users) {
-        console.error(`${ctx.p('err')}Failed to fetch ${spec.name}: ${result.error}`);
+        console.error(`${ctx.p('err')}${spec.name} getirilemedi: ${result.error}`);
         process.exit(1);
       }
 
@@ -164,10 +164,10 @@ async function runUserListCommand(
     if (cmdOpts.json) {
       console.log(JSON.stringify({ users: allUsers, nextCursor: nextCursor ?? null }, null, 2));
     } else {
-      console.error(`${ctx.p('info')}Total: ${allUsers.length} users`);
+      console.error(`${ctx.p('info')}Toplam: ${allUsers.length} kullanıcı`);
       if (nextCursor) {
-        console.error(`${ctx.p('info')}Stopped at --max-pages. Use --cursor to continue.`);
-        console.error(`${ctx.p('info')}Next cursor: ${nextCursor}`);
+        console.error(`${ctx.p('info')}--max-pages'de durduruldu. Devam etmek için --cursor kullanın.`);
+        console.error(`${ctx.p('info')}Sonraki imleç: ${nextCursor}`);
       }
       printUsers(allUsers, ctx);
     }
@@ -185,16 +185,16 @@ async function runUserListCommand(
       }
     } else {
       if (result.users.length === 0) {
-        console.log('No users found.');
+        console.log('Kullanıcı bulunamadı.');
       } else {
         printUsers(result.users, ctx);
         if (result.nextCursor) {
-          console.error(`${ctx.p('info')}Next cursor: ${result.nextCursor}`);
+          console.error(`${ctx.p('info')}Sonraki imleç: ${result.nextCursor}`);
         }
       }
     }
   } else {
-    console.error(`${ctx.p('err')}Failed to fetch ${spec.name}: ${result.error}`);
+    console.error(`${ctx.p('err')}${spec.name} getirilemedi: ${result.error}`);
     process.exit(1);
   }
 }
@@ -215,25 +215,25 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
 
   registerUserListCommand({
     name: 'following',
-    description: 'Get users that you (or another user) follow',
+    description: 'Sizin (veya başka bir kullanıcının) takip ettiği kullanıcıları getir',
     fetch: (client, userId, count, cursor) => client.getFollowing(userId, count, cursor),
   });
 
   registerUserListCommand({
     name: 'followers',
-    description: 'Get users that follow you (or another user)',
+    description: 'Sizi (veya başka bir kullanıcıyı) takip eden kullanıcıları getir',
     fetch: (client, userId, count, cursor) => client.getFollowers(userId, count, cursor),
   });
 
   program
     .command('likes')
-    .description('Get your liked tweets')
-    .option('-n, --count <number>', 'Number of likes to fetch', '20')
-    .option('--all', 'Fetch all likes (paged)')
-    .option('--max-pages <number>', 'Stop after N pages when using --all')
-    .option('--cursor <string>', 'Resume pagination from a cursor')
-    .option('--json', 'Output as JSON')
-    .option('--json-full', 'Output as JSON with full raw API response in _raw field')
+    .description('Beğenilen tweetlerinizi getir')
+    .option('-n, --count <sayı>', 'Getirilecek beğeni sayısı', '20')
+    .option('--all', 'Tüm beğenileri getir (sayfallı)')
+    .option('--max-pages <sayı>', '--all kullanırken N sayfadan sonra dur')
+    .option('--cursor <string>', 'Sayfalandırmayı bir imleçten devam ettir')
+    .option('--json', 'JSON olarak çıktı ver')
+    .option('--json-full', 'Ham API yanıtı ile birlikte JSON olarak çıktı ver')
     .action(
       async (cmdOpts: {
         count?: string;
@@ -262,15 +262,15 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
 
         const usePagination = cmdOpts.all || cmdOpts.cursor;
         if (maxPages !== undefined && !usePagination) {
-          console.error(`${ctx.p('err')}--max-pages requires --all or --cursor.`);
+          console.error(`${ctx.p('err')}--max-pages, --all veya --cursor gerektirir.`);
           process.exit(1);
         }
         if (!usePagination && (!Number.isFinite(count) || count <= 0)) {
-          console.error(`${ctx.p('err')}Invalid --count. Expected a positive integer.`);
+          console.error(`${ctx.p('err')}Geçersiz --count. Pozitif bir tam sayı bekleniyor.`);
           process.exit(1);
         }
         if (maxPages !== undefined && (!Number.isFinite(maxPages) || maxPages <= 0)) {
-          console.error(`${ctx.p('err')}Invalid --max-pages. Expected a positive integer.`);
+          console.error(`${ctx.p('err')}Geçersiz --max-pages. Pozitif bir tam sayı bekleniyor.`);
           process.exit(1);
         }
 
@@ -287,10 +287,10 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
           ctx.printTweetsResult(result, {
             json: isJson,
             usePagination: Boolean(usePagination),
-            emptyMessage: 'No liked tweets found.',
+            emptyMessage: 'Beğenilen tweet bulunamadı.',
           });
         } else {
-          console.error(`${ctx.p('err')}Failed to fetch likes: ${result.error}`);
+          console.error(`${ctx.p('err')}Beğeniler getirilemedi: ${result.error}`);
           process.exit(1);
         }
       },
@@ -298,7 +298,7 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
 
   program
     .command('whoami')
-    .description('Show which Twitter account the current credentials belong to')
+    .description('Geçerli kimlik bilgilerinin hangi Twitter hesabına ait olduğunu göster')
     .action(async () => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
@@ -330,23 +330,23 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
         console.log(`${ctx.l('engine')}graphql`);
         console.log(`${ctx.l('credentials')}${credentialSource}`);
       } else {
-        console.error(`${ctx.p('err')}Failed to determine current user: ${result.error ?? 'Unknown error'}`);
+        console.error(`${ctx.p('err')}Geçerli kullanıcı belirlenemedi: ${result.error ?? 'Bilinmeyen hata'}`);
         process.exit(1);
       }
     });
 
   program
     .command('about')
-    .description('Get account origin and location information for a user')
-    .argument('<username>', 'Twitter username (with or without @)')
-    .option('--json', 'Output as JSON')
+    .description('Bir kullanıcı için hesap kaynağı ve konum bilgisi al')
+    .argument('<kullanıcı_adı>', 'Twitter kullanıcı adı (@ ile veya @ olmadan)')
+    .option('--json', 'JSON olarak çıktı ver')
     .action(async (username: string, cmdOpts: { json?: boolean }) => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
       const normalizedHandle = normalizeHandle(username);
 
       if (!normalizedHandle) {
-        console.error(`${ctx.p('err')}Invalid username: ${username}`);
+        console.error(`${ctx.p('err')}Geçersiz kullanıcı adı: ${username}`);
         process.exit(1);
       }
 
@@ -373,7 +373,7 @@ export function registerUserCommands(program: Command, ctx: CliContext): void {
           }
         }
       } else {
-        console.error(`${ctx.p('err')}Failed to fetch account information: ${result.error ?? 'Unknown error'}`);
+        console.error(`${ctx.p('err')}Hesap bilgisi getirilemedi: ${result.error ?? 'Bilinmeyen hata'}`);
         process.exit(1);
       }
     });

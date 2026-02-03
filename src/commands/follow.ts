@@ -21,7 +21,7 @@ async function resolveUserId(
       return { userId: lookup.userId, username: lookup.username };
     }
     if (!isNumeric) {
-      console.error(`${ctx.p('err')}Failed to find user @${handle}: ${lookup.error ?? 'Unknown error'}`);
+      console.error(`${ctx.p('err')}@${handle} kullanıcısı bulunamadı: ${lookup.error ?? 'Bilinmeyen hata'}`);
       return null;
     }
   }
@@ -30,15 +30,15 @@ async function resolveUserId(
     return { userId: raw };
   }
 
-  console.error(`${ctx.p('err')}Invalid username: ${usernameOrId}`);
+  console.error(`${ctx.p('err')}Geçersiz kullanıcı adı: ${usernameOrId}`);
   return null;
 }
 
 export function registerFollowCommands(program: Command, ctx: CliContext): void {
   program
     .command('follow')
-    .description('Follow a user')
-    .argument('<username-or-id>', 'Username (with or without @) or user ID to follow')
+    .description('Bir kullanıcıyı takip et')
+    .argument('<kullanıcı-adı-veya-id>', 'Takip edilecek kullanıcı adı (@ ile veya olmadan) veya kullanıcı ID')
     .action(async (usernameOrId: string) => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
@@ -67,17 +67,17 @@ export function registerFollowCommands(program: Command, ctx: CliContext): void 
       const result = await client.follow(userId);
       if (result.success) {
         const finalName = result.username ? `@${result.username}` : displayName;
-        console.log(`${ctx.p('ok')}Now following ${finalName}`);
+        console.log(`${ctx.p('ok')}Artık ${finalName} takip ediliyor`);
       } else {
-        console.error(`${ctx.p('err')}Failed to follow ${displayName}: ${result.error}`);
+        console.error(`${ctx.p('err')}${displayName} takip edilemedi: ${result.error}`);
         process.exit(1);
       }
     });
 
   program
     .command('unfollow')
-    .description('Unfollow a user')
-    .argument('<username-or-id>', 'Username (with or without @) or user ID to unfollow')
+    .description('Bir kullanıcıyı takipten çık')
+    .argument('<kullanıcı-adı-veya-id>', 'Takipten çıkılacak kullanıcı adı (@ ile veya olmadan) veya kullanıcı ID')
     .action(async (usernameOrId: string) => {
       const opts = program.opts();
       const timeoutMs = ctx.resolveTimeoutFromOptions(opts);
@@ -106,9 +106,9 @@ export function registerFollowCommands(program: Command, ctx: CliContext): void 
       const result = await client.unfollow(userId);
       if (result.success) {
         const finalName = result.username ? `@${result.username}` : displayName;
-        console.log(`${ctx.p('ok')}Unfollowed ${finalName}`);
+        console.log(`${ctx.p('ok')}${finalName} takipten çıkarıldı`);
       } else {
-        console.error(`${ctx.p('err')}Failed to unfollow ${displayName}: ${result.error}`);
+        console.error(`${ctx.p('err')}${displayName} takipten çıkarılamadı: ${result.error}`);
         process.exit(1);
       }
     });

@@ -23,9 +23,10 @@ function countFeatureOverrides(overrides: FeatureOverrides): number {
 export function registerQueryIdsCommand(program: Command, ctx: CliContext): void {
   program
     .command('query-ids')
-    .description('Show or refresh cached Twitter GraphQL query IDs')
-    .option('--json', 'Output as JSON')
+    .description('GraphQL sorgu kimliklerini görüntüle veya yenile')
+    .option('--json', 'JSON olarak çıktı ver')
     .option('--fresh', 'Force refresh (downloads X client bundles)', false)
+    .option('--refresh', 'Önbellekten sil ve Twitter\'dan yeniden çek')
     .action(async (cmdOpts: { json?: boolean; fresh?: boolean }) => {
       const operations = [
         'CreateTweet',
@@ -41,9 +42,9 @@ export function registerQueryIdsCommand(program: Command, ctx: CliContext): void
       ];
 
       if (cmdOpts.fresh) {
-        console.error(`${ctx.p('info')}Refreshing GraphQL query IDs…`);
+        console.error(`${ctx.p('info')}GraphQL sorgu kimlikleri yenileniyor…`);
         await runtimeQueryIds.refresh(operations, { force: true });
-        console.error(`${ctx.p('info')}Refreshing feature overrides…`);
+        console.error(`${ctx.p('info')}Özellik geçersiz kılmaları yenileniyor…`);
         await refreshFeatureOverridesCache();
       }
 
@@ -65,8 +66,8 @@ export function registerQueryIdsCommand(program: Command, ctx: CliContext): void
           );
           return;
         }
-        console.log(`${ctx.p('warn')}No cached query IDs yet.`);
-        console.log(`${ctx.p('info')}Run: bird query-ids --fresh`);
+        console.log(`${ctx.p('warn')}Henüz önbelleğe alınmış sorgu kimliği yok.`);
+        console.log(`${ctx.p('info')}Çalıştır: bird query-ids --fresh`);
         console.log(`features_path: ${featureSnapshot.cachePath}`);
         return;
       }
@@ -92,10 +93,10 @@ export function registerQueryIdsCommand(program: Command, ctx: CliContext): void
         return;
       }
 
-      console.log(`${ctx.p('ok')}GraphQL query IDs cached`);
+      console.log(`${ctx.p('ok')}GraphQL sorgu kimlikleri önbelleğe alındı`);
       console.log(`path: ${info.cachePath}`);
       console.log(`fetched_at: ${info.snapshot.fetchedAt}`);
-      console.log(`fresh: ${info.isFresh ? 'yes' : 'no'}`);
+      console.log(`fresh: ${info.isFresh ? 'evet' : 'hayır'}`);
       console.log(`ops: ${Object.keys(info.snapshot.ids).length}`);
       console.log(`features_path: ${featureSnapshot.cachePath}`);
       console.log(`features: ${countFeatureOverrides(featureSnapshot.overrides)}`);

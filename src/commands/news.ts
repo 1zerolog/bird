@@ -24,7 +24,7 @@ function printNewsItems(
   }
 
   if (items.length === 0) {
-    console.log(opts.emptyMessage ?? 'No news items found.');
+    console.log(opts.emptyMessage ?? 'Haber bulunamadı.');
     return;
   }
 
@@ -41,7 +41,7 @@ function printNewsItems(
       meta.push(item.timeAgo);
     }
     if (item.postCount) {
-      meta.push(`${formatPostCount(item.postCount)} posts`);
+      meta.push(`${formatPostCount(item.postCount)} gönderi`);
     }
     if (meta.length > 0) {
       console.log(`  ${ctx.colors.muted(meta.join(' | '))}`);
@@ -53,7 +53,7 @@ function printNewsItems(
 
     // Print related tweets if available
     if (item.tweets && item.tweets.length > 0) {
-      console.log(`  ${ctx.colors.section('Related tweets:')}`);
+      console.log(`  ${ctx.colors.section('İlgili tweetler:')}`);
       const tweetLimit = opts.tweetLimit ?? item.tweets.length;
       for (const tweet of item.tweets.slice(0, tweetLimit)) {
         console.log(
@@ -70,18 +70,18 @@ export function registerNewsCommand(program: Command, ctx: CliContext): void {
   program
     .command('news')
     .alias('trending')
-    .description('Fetch AI-curated news and trending topics from Explore tabs')
-    .option('-n, --count <number>', 'Number of items to fetch', '10')
-    .option('--ai-only', 'Show only AI-curated news items')
-    .option('--with-tweets', 'Also fetch related tweets for each news item')
-    .option('--tweets-per-item <number>', 'Number of tweets to fetch per news item (default: 5)', '5')
-    .option('--for-you', 'Fetch only from For You tab')
-    .option('--news-only', 'Fetch only from News tab')
-    .option('--sports', 'Fetch only from Sports tab')
-    .option('--entertainment', 'Fetch only from Entertainment tab')
-    .option('--trending-only', 'Fetch only from Trending tab')
-    .option('--json', 'Output as JSON')
-    .option('--json-full', 'Output as JSON with full raw API response in _raw field')
+    .description('Keşfet sekmelerinden YZ tarafından seçilmiş haberleri ve trend konuları getir')
+    .option('-n, --count <sayı>', 'Getirilecek haber sayısı', '10')
+    .option('--ai-only', 'Sadece YZ tarafından seçilmiş haberleri göster')
+    .option('--with-tweets', 'Her haber için ilişkili tweetleri de getir')
+    .option('--tweets-per-item <sayı>', 'Haber başına getirilecek tweet sayısı (varsayılan: 5)', '5')
+    .option('--for-you', 'Sadece Senin İçin sekmesinden getir')
+    .option('--news-only', 'Sadece Haberler sekmesinden getir')
+    .option('--sports', 'Sadece Spor sekmesinden getir')
+    .option('--entertainment', 'Sadece Eğlence sekmesinden getir')
+    .option('--trending-only', 'Sadece Trend sekmesinden getir')
+    .option('--json', 'JSON olarak çıktı ver')
+    .option('--json-full', 'Ham API yanıtı ile birlikte JSON olarak çıktı ver')
     .action(
       async (cmdOpts: {
         count?: string;
@@ -109,17 +109,17 @@ export function registerNewsCommand(program: Command, ctx: CliContext): void {
         }
 
         if (Number.isNaN(count) || count < 1) {
-          console.error(`${ctx.p('err')}--count must be a positive number`);
+          console.error(`${ctx.p('err')}--count pozitif bir sayı olmalıdır`);
           process.exit(1);
         }
 
         if (Number.isNaN(tweetsPerItem) || tweetsPerItem < 1) {
-          console.error(`${ctx.p('err')}--tweets-per-item must be a positive number`);
+          console.error(`${ctx.p('err')}--tweets-per-item pozitif bir sayı olmalıdır`);
           process.exit(1);
         }
 
         if (!cookies.authToken || !cookies.ct0) {
-          console.error(`${ctx.p('err')}Missing required credentials`);
+          console.error(`${ctx.p('err')}Gerekli kimlik bilgileri eksik`);
           process.exit(1);
         }
 
@@ -164,7 +164,7 @@ export function registerNewsCommand(program: Command, ctx: CliContext): void {
             tweetLimit: withTweets ? tweetsPerItem : undefined,
           });
         } else {
-          console.error(`${ctx.p('err')}Failed to fetch news: ${result.error}`);
+          console.error(`${ctx.p('err')}Haberler getirilemedi: ${result.error}`);
           process.exit(1);
         }
       },

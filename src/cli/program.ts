@@ -73,11 +73,11 @@ export function createProgram(ctx: CliContext): Command {
     'beforeAll',
     () =>
       `${ctx.colors.banner('bird')} ${ctx.colors.muted(getCliVersion())} ${ctx.colors.subtitle(
-        '— fast X CLI for tweeting, replying, and reading',
+        '— tweet atmak, yanıtlamak ve okumak için hızlı X CLI',
       )}`,
   );
 
-  program.name('bird').description('Post tweets and replies via Twitter/X GraphQL API').version(getCliVersion());
+  program.name('bird').description('Twitter/X GraphQL API üzerinden tweet ve yanıt gönder').version(getCliVersion());
 
   const formatExample = (command: string, description: string): string =>
     `${ctx.colors.command(`  ${command}`)}\n${ctx.colors.muted(`    ${description}`)}`;
@@ -85,54 +85,54 @@ export function createProgram(ctx: CliContext): Command {
   program.addHelpText(
     'afterAll',
     () =>
-      `\n${ctx.colors.section('Examples')}\n${[
-        formatExample('bird whoami', 'Show the logged-in account via GraphQL cookies'),
-        formatExample('bird --firefox-profile default-release whoami', 'Use Firefox profile cookies'),
-        formatExample('bird tweet "hello from bird"', 'Send a tweet'),
+      `\n${ctx.colors.section('Örnekler')}\n${[
+        formatExample('bird whoami', 'Oturum açılmış hesabı GraphQL çerezleriyle göster'),
+        formatExample('bird --firefox-profile default-release whoami', 'Firefox profil çerezlerini kullan'),
+        formatExample('bird tweet "bird\'dan merhaba"', 'Tweet gönder'),
         formatExample(
           'bird 1234567890123456789 --json',
-          'Read a tweet (ID or URL shorthand for `read`) and print JSON',
+          'Tweet oku (ID veya URL kısayolu `read` için) ve JSON olarak yazdır',
         ),
-      ].join('\n\n')}\n\n${ctx.colors.section('Shortcuts')}\n${[
-        formatExample('bird <tweet-id-or-url> [--json]', 'Shorthand for `bird read <tweet-id-or-url>`'),
-      ].join('\n\n')}\n\n${ctx.colors.section('JSON Output')}\n${ctx.colors.muted(
-        `  Add ${ctx.colors.option('--json')} to: read, replies, thread, search, mentions, bookmarks, likes, following, followers, about, lists, list-timeline, user-tweets, query-ids`,
+      ].join('\n\n')}\n\n${ctx.colors.section('Kısayollar')}\n${[
+        formatExample('bird <tweet-id-veya-url> [--json]', '`bird read <tweet-id-veya-url>` için kısayol'),
+      ].join('\n\n')}\n\n${ctx.colors.section('JSON Çıktısı')}\n${ctx.colors.muted(
+        `  ${ctx.colors.option('--json')} ekle: read, replies, thread, search, mentions, bookmarks, likes, following, followers, about, lists, list-timeline, user-tweets, query-ids`,
       )}\n${ctx.colors.muted(
-        `  Add ${ctx.colors.option('--json-full')} to include raw API response in ${ctx.colors.argument('_raw')} field (tweet commands only)`,
-      )}\n${ctx.colors.muted(`  (Run ${ctx.colors.command('bird <command> --help')} to see per-command flags.)`)}`,
+        `  ${ctx.colors.option('--json-full')} ekle: ham API yanıtını ${ctx.colors.argument('_raw')} alanına dahil et (sadece tweet komutları)`,
+      )}\n${ctx.colors.muted(`  (${ctx.colors.command('bird <komut> --help')} çalıştırarak komut bayraklarını görün.)`)}`,
   );
 
   program.addHelpText(
     'afterAll',
     () =>
-      `\n\n${ctx.colors.section('Config')}\n${ctx.colors.muted(
-        `  Reads ${ctx.colors.argument('~/.config/bird/config.json5')} and ${ctx.colors.argument('./.birdrc.json5')} (JSON5)`,
+      `\n\n${ctx.colors.section('Yapılandırma')}\n${ctx.colors.muted(
+        `  ${ctx.colors.argument('~/.config/bird/config.json5')} ve ${ctx.colors.argument('./.birdrc.json5')} (JSON5) okur`,
       )}\n${ctx.colors.muted(
-        `  Supports: chromeProfile, chromeProfileDir, firefoxProfile, cookieSource, cookieTimeoutMs, timeoutMs, quoteDepth`,
-      )}\n\n${ctx.colors.section('Env')}\n${ctx.colors.muted(
+        `  Desteklenen: chromeProfile, chromeProfileDir, firefoxProfile, cookieSource, cookieTimeoutMs, timeoutMs, quoteDepth`,
+      )}\n\n${ctx.colors.section('Ortam Değişkenleri')}\n${ctx.colors.muted(
         `  ${ctx.colors.option('NO_COLOR')}, ${ctx.colors.option('BIRD_TIMEOUT_MS')}, ${ctx.colors.option('BIRD_COOKIE_TIMEOUT_MS')}, ${ctx.colors.option('BIRD_QUOTE_DEPTH')}`,
       )}`,
   );
 
   program
-    .option('--auth-token <token>', 'Twitter auth_token cookie')
-    .option('--ct0 <token>', 'Twitter ct0 cookie')
-    .option('--chrome-profile <name>', 'Chrome profile name for cookie extraction', ctx.config.chromeProfile)
+    .option('--auth-token <token>', 'Twitter auth_token çerezi')
+    .option('--ct0 <token>', 'Twitter ct0 çerezi')
+    .option('--chrome-profile <ad>', 'Cookie çıkarma için Chrome profil adı', ctx.config.chromeProfile)
     .option(
-      '--chrome-profile-dir <path>',
-      'Chrome/Chromium profile directory or cookie DB path for cookie extraction',
+      '--chrome-profile-dir <yol>',
+      'Cookie çıkarma için Chrome/Chromium profil dizini veya cookie DB yolu',
       ctx.config.chromeProfileDir,
     )
-    .option('--firefox-profile <name>', 'Firefox profile name for cookie extraction', ctx.config.firefoxProfile)
-    .option('--cookie-timeout <ms>', 'Cookie extraction timeout in milliseconds (keychain/OS helpers)')
-    .option('--cookie-source <source>', 'Cookie source for browser cookie extraction (repeatable)', collectCookieSource)
-    .option('--media <path>', 'Attach media file (repeatable, up to 4 images or 1 video)', collect)
-    .option('--alt <text>', 'Alt text for the corresponding --media (repeatable)', collect)
-    .option('--timeout <ms>', 'Request timeout in milliseconds')
-    .option('--quote-depth <depth>', 'Max quoted tweet depth (default: 1; 0 disables)')
-    .option('--plain', 'Plain output (stable, no emoji, no color)')
-    .option('--no-emoji', 'Disable emoji output')
-    .option('--no-color', 'Disable ANSI colors (or set NO_COLOR)');
+    .option('--firefox-profile <ad>', 'Cookie çıkarma için Firefox profil adı', ctx.config.firefoxProfile)
+    .option('--cookie-timeout <ms>', 'Cookie çıkarma zaman aşımı (milisaniye, keychain/işletim sistemi yardımcıları)')
+    .option('--cookie-source <kaynak>', 'Tarayıcı cookie çıkarma kaynağı (tekrarlanabilir)', collectCookieSource)
+    .option('--media <yol>', 'Medya dosyası ekle (tekrarlanabilir, en fazla 4 resim veya 1 video)', collect)
+    .option('--alt <metin>', 'İlgili --media için alt metin (tekrarlanabilir)', collect)
+    .option('--timeout <ms>', 'İstek zaman aşımı (milisaniye)')
+    .option('--quote-depth <derinlik>', 'Maksimum alıntı tweet derinliği (varsayılan: 1; 0 devre dışı bırakır)')
+    .option('--plain', 'Düz çıktı (sabit, emoji yok, renk yok)')
+    .option('--no-emoji', 'Emoji çıktısını devre dışı bırak')
+    .option('--no-color', 'ANSI renklerini devre dışı bırak (veya NO_COLOR ayarla)');
 
   program.hook('preAction', (_thisCommand, actionCommand) => {
     ctx.applyOutputFromCommand(actionCommand);
