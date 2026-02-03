@@ -4,7 +4,7 @@ import { TwitterClient } from '../lib/twitter-client.js';
 
 export function registerHomeCommand(program: Command, ctx: CliContext): void {
   program
-    .command('home')
+    .command('anasayfa')
     .description('Ana zaman akışını getir')
     .option('-n, --count <sayı>', 'Getirilecek tweet sayısı', '20')
     .option('--following', 'Takip ettiklerinin akışını (kronolojik) getir, "For You" yerine')

@@ -26,7 +26,7 @@ async function uploadMediaOrExit(
 
 export function registerPostCommands(program: Command, ctx: CliContext): void {
   program
-    .command('tweet')
+    .command('tweetle')
     .description('Yeni bir tweet gönder')
     .argument('<metin>', 'Tweet metni')
     .action(async (text: string) => {
@@ -70,7 +70,7 @@ export function registerPostCommands(program: Command, ctx: CliContext): void {
     });
 
   program
-    .command('reply')
+    .command('yanitla')
     .description('Mevcut bir tweete yanıt ver')
     .argument('<tweet-id-veya-url>', 'Yanıtlanacak tweet ID veya URL')
     .argument('<metin>', 'Yanıt metni')

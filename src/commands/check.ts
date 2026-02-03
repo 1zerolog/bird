@@ -3,7 +3,7 @@ import type { CliContext } from '../cli/shared.js';
 
 export function registerCheckCommand(program: Command, ctx: CliContext): void {
   program
-    .command('check')
+    .command('kontrol')
     .description('Kimlik bilgisi durumunu kontrol et')
     .action(async () => {
       const opts = program.opts();

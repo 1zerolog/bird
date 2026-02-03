@@ -68,7 +68,7 @@ function printNewsItems(
 
 export function registerNewsCommand(program: Command, ctx: CliContext): void {
   program
-    .command('news')
+    .command('haberler')
     .alias('trending')
     .description('Keşfet sekmelerinden YZ tarafından seçilmiş haberleri ve trend konuları getir')
     .option('-n, --count <sayı>', 'Getirilecek haber sayısı', '10')

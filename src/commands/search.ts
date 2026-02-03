@@ -6,7 +6,7 @@ import { TwitterClient } from '../lib/twitter-client.js';
 
 export function registerSearchCommands(program: Command, ctx: CliContext): void {
   program
-    .command('search')
+    .command('ara')
     .description('Search for tweets')
     .argument('<query>', 'Search query (e.g., "@clawdbot" or "from:clawdbot")')
     .option('-n, --count <number>', 'Number of tweets to fetch', '10')
@@ -83,7 +83,7 @@ export function registerSearchCommands(program: Command, ctx: CliContext): void 
     );
 
   program
-    .command('mentions')
+    .command('bahsetmeler')
     .description('Find tweets mentioning a user (defaults to current user)')
     .option('-u, --user <handle>', 'User handle (e.g. @steipete)')
     .option('-n, --count <number>', 'Number of tweets to fetch', '10')

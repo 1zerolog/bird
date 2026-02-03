@@ -22,7 +22,7 @@ function countFeatureOverrides(overrides: FeatureOverrides): number {
 
 export function registerQueryIdsCommand(program: Command, ctx: CliContext): void {
   program
-    .command('query-ids')
+    .command('sorgu-idleri')
     .description('GraphQL sorgu kimliklerini görüntüle veya yenile')
     .option('--json', 'JSON olarak çıktı ver')
     .option('--fresh', 'Force refresh (downloads X client bundles)', false)

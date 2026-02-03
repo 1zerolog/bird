@@ -6,7 +6,7 @@ import { TwitterClient } from '../lib/twitter-client.js';
 
 export function registerReadCommands(program: Command, ctx: CliContext): void {
   program
-    .command('read')
+    .command('oku')
     .description('Bir tweeti oku')
     .argument('<tweet-id-veya-url>', 'Tweet ID veya URL')
     .option('--json', 'JSON olarak çıktı ver')
@@ -47,7 +47,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
     });
 
   program
-    .command('replies')
+    .command('yanitlar')
     .description('List replies to a tweet (by ID or URL)')
     .argument('<tweet-id-or-url>', 'Tweet ID or URL')
     .option('--all', 'Fetch all replies (paged)')
@@ -124,7 +124,7 @@ export function registerReadCommands(program: Command, ctx: CliContext): void {
     );
 
   program
-    .command('thread')
+    .command('konu')
     .description('Show the full conversation thread containing the tweet')
     .argument('<tweet-id-or-url>', 'Tweet ID or URL')
     .option('--all', 'Fetch all thread tweets (paged)')

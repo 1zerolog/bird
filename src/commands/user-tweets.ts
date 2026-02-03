@@ -9,7 +9,7 @@ export function registerUserTweetsCommand(program: Command, ctx: CliContext): vo
     `  ${ctx.colors.command(cmd)}\n    ${ctx.colors.muted(desc)}`;
 
   program
-    .command('user-tweets')
+    .command('kullanici-tweetleri')
     .description('Bir kullanıcının profil zaman akışından tweetleri getir')
     .argument('<kullanıcı_adı>', 'Tweetleri getirilecek kullanıcı adı (örn. @steipete veya steipete)')
     .option('-n, --count <sayı>', 'Getirilecek tweet sayısı', '20')

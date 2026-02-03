@@ -8,7 +8,7 @@ import type { TweetData, TweetWithMeta } from '../lib/twitter-client-types.js';
 
 export function registerBookmarksCommand(program: Command, ctx: CliContext): void {
   program
-    .command('bookmarks')
+    .command('yerimleri')
     .description('Yer imlerini getir')
     .option('-n, --count <sayı>', 'Getirilecek yer imi sayısı', '20')
     .option('--folder-id <id>', 'Bookmark folder (collection) id')

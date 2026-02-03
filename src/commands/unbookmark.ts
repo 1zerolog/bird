@@ -4,7 +4,7 @@ import { TwitterClient } from '../lib/twitter-client.js';
 
 export function registerUnbookmarkCommand(program: Command, ctx: CliContext): void {
   program
-    .command('unbookmark')
+    .command('yerimi-kaldir')
     .description('Yer imlerinden tweetleri kaldır')
     .argument('<tweet-ids...>', 'Kaldırılacak tweet ID veya URL\'leri')
     .action(async (tweetIdOrUrls: string[]) => {

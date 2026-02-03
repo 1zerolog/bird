@@ -33,7 +33,7 @@ function printLists(lists: TwitterList[], ctx: CliContext): void {
 
 export function registerListsCommand(program: Command, ctx: CliContext): void {
   program
-    .command('lists')
+    .command('listeler')
     .description('Abone olduğunuz Twitter listelerini getir')
     .option('--member-of', 'Abone olduğunuz listeleri göster (sahip olunan listeler yerine)')
     .option('-n, --count <number>', 'Getirilecek liste sayısı', '100')
@@ -76,7 +76,7 @@ export function registerListsCommand(program: Command, ctx: CliContext): void {
     });
 
   program
-    .command('list-timeline')
+    .command('liste-akisi')
     .description('Belirli bir liste için tweet zaman akışını getir')
     .argument('<list-id-or-url>', 'Liste kimliği veya URL')
     .option('-n, --count <number>', 'Getirilecek tweet sayısı', '20')

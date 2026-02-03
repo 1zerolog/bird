@@ -36,7 +36,7 @@ async function resolveUserId(
 
 export function registerFollowCommands(program: Command, ctx: CliContext): void {
   program
-    .command('follow')
+    .command('takipet')
     .description('Bir kullanıcıyı takip et')
     .argument('<kullanıcı-adı-veya-id>', 'Takip edilecek kullanıcı adı (@ ile veya olmadan) veya kullanıcı ID')
     .action(async (usernameOrId: string) => {
@@ -75,7 +75,7 @@ export function registerFollowCommands(program: Command, ctx: CliContext): void 
     });
 
   program
-    .command('unfollow')
+    .command('takipbirak')
     .description('Bir kullanıcıyı takipten çık')
     .argument('<kullanıcı-adı-veya-id>', 'Takipten çıkılacak kullanıcı adı (@ ile veya olmadan) veya kullanıcı ID')
     .action(async (usernameOrId: string) => {
